@@ -1,5 +1,7 @@
 body {
   margin: 0;
+  padding: 0;
+  height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -10,4 +12,52 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+
+h2 {
+	text-align: center;
+	font-weight: bold;
+	font-size: 3em;
+}
+
+#information {
+	width: 70%;
+	height: 100%;
+	background-color: #f3f5f7;
+}
+
+#head {
+	background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("https://image.shutterstock.com/image-photo/bright-spring-view-cameo-island-260nw-1048185397.jpg");
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	height: 20em;
+	color: white;
+	padding: 1em;
+}
+
+#etapes {
+}
+
+.etape {
+	background-color: white;
+	margin-left : 2em;
+	margin-right : 2em;
+	padding-left : 1em;
+	padding-top : 0.1em;
+}
+
+.transition_etape {
+	padding-left : 1em;
+	margin-left : 2em;
+	border-left: 0.3em solid;
+	color: #8a99ad;
+}
+
+.nomEtape {
+	font-size:2em;
+}
+
+.villedate_etape {
+	color: #8a99ad;
 }
