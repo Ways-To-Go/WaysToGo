@@ -26,8 +26,8 @@ class ShowVoyage extends Component {
 							<div id="head">
 								<h2>{param.title}</h2>
 								<p>{param.description}</p>
-								<p>{param.vegan ? "Ce voyage est vegan" : "Ce voyage est signalé comme non-vegan"}</p>
-								<p>{param.ecological ? "Ce voyage est ecologique" : "Ce voyage est signalé comme non-ecologique"}</p>
+								<p>{param.vegan ? "Ce voyage est vegan" : "Ce voyage est signalÃ© comme non-vegan"}</p>
+								<p>{param.ecological ? "Ce voyage est ecologique" : "Ce voyage est signalÃ© comme non-ecologique"}</p>
 								<p>auteur : {param.author.firstName + " " + param.author.lastName}</p>
 							</div>
 

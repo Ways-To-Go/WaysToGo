@@ -3,7 +3,7 @@ import { Map, TileLayer, Marker, Popup } from "react-leaflet";
 import "./App.css";
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 
-class ShowCarte extends Component {
+export default class ShowCarte extends Component {
 	constructor(props) {
 		super(props);
 
@@ -47,19 +47,29 @@ class ShowCarte extends Component {
 
 
 
-	getLogoStyle = () => {
+	/*getLogoStyle = () => {
 		return {
 			position: "absolute",
 			zIndex: 1,
 			left: "40px",
 		};
 	};
+	<h1 style={this.getLogoStyle()}>WaysToGo</h1>
+	*/
 
 	render() {
 		return (
 			<div className="App">
-				<h1 style={this.getLogoStyle()}>WaysToGo</h1>
-				<a href={"?show=save"}>Ajoutez un voyage</a>
+
+				<div class="topnav">
+					<a class="active" href="/">WaysToGo</a>
+					<a href={"?show=save"}>Ajoutez un voyage</a>
+					<a href="#contact">Contact</a>
+					<a href="#about">About</a>
+				</div>
+
+
+
 				<Map center={[this.state.lat, this.state.lng]} zoom={this.state.zoom}>
 					<TileLayer
 						attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -70,7 +80,7 @@ class ShowCarte extends Component {
 						coord[0].x != undefined ?
 							<Marker position={[coord[0].y, coord[0].x]}>
 								<Popup>
-									<h1>Nom à venir</h1>
+									<h1>{'Nom Ã  venir'}</h1>
 									<a href={"?show=trip&id=1"}>Cliquez</a>
 								</Popup>
 							</Marker> : ""
@@ -80,5 +90,3 @@ class ShowCarte extends Component {
 		);
 	}
 }
-
-export default ShowCarte;

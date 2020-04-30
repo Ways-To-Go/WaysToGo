@@ -1,17 +1,14 @@
 body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 
@@ -41,21 +38,21 @@ h2 {
 
 .etape {
 	background-color: white;
-	margin-left : 2em;
-	margin-right : 2em;
-	padding-left : 1em;
-	padding-top : 0.1em;
+	margin-left: 2em;
+	margin-right: 2em;
+	padding-left: 1em;
+	padding-top: 0.1em;
 }
 
 .transition_etape {
-	padding-left : 1em;
-	margin-left : 2em;
+	padding-left: 1em;
+	margin-left: 2em;
 	border-left: 0.3em solid;
 	color: #8a99ad;
 }
 
 .nomEtape {
-	font-size:2em;
+	font-size: 2em;
 }
 
 .villedate_etape {

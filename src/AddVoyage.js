@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 
 
-class AddVoyage extends Component {
+export default class AddVoyage extends Component {
 	constructor(props) {
 		super(props);
 
@@ -44,34 +44,41 @@ class AddVoyage extends Component {
 
 	render() {
 		return (
-			<div class="formulaire">
-				<h3>Créer un nouveau voyage</h3>
+			<div>
+				<div class="topnav">
+					<a href="/">WaysToGo</a>
+					<a class="active" href={"?show=save"}>Ajoutez un voyage</a>
+					<a href="#contact">Contact</a>
+					<a href="#about">About</a>
+				</div>
 
-				<form action="/action_page.php">
-					<label for="fname">Nom de votre voyage</label>
-					<input type="text" id="fname" name="firstname" placeholder="Nom.."></input>
+				<div class="formulaire">
+					<h3>CrÃ©er un nouveau voyage</h3>
 
-					<label for="lname">Description</label>
-					<input type="text" id="lname" name="lastname" placeholder="Description.."></input>
+					<form action="/action_page.php">
+						<label for="fname">Nom de votre voyage</label>
+						<input type="text" id="fname" name="firstname" placeholder="Nom.."></input>
 
-					<div>
-						<input type="checkbox" id="voyagevegan" name="voyagevegan" value="newsletter"></input>
-						<label for="voyagevegan">Ce voyage est-il vegan ?</label>
-					</div>
+						<label for="lname">Description</label>
+						<input type="text" id="lname" name="lastname" placeholder="Description.."></input>
 
-					<div>
-						<input type="checkbox" id="voyageecolo" name="voyagevegan" value="newsletter"></input>
-						<label for="voyageecolo">Ce voyage est-il ecologique ?</label>
-					</div>
+						<div>
+							<input type="checkbox" id="voyagevegan" name="voyagevegan" value="newsletter"></input>
+							<label for="voyagevegan">Ce voyage est-il vegan ?</label>
+						</div>
 
-					<div ref={this.setTextInputRef}></div>
-					<button type="button" onClick={this.addEtapeVoyage}>Ajouter une étape</button>
+						<div>
+							<input type="checkbox" id="voyageecolo" name="voyagevegan" value="newsletter"></input>
+							<label for="voyageecolo">Ce voyage est-il ecologique ?</label>
+						</div>
 
-					<input type="submit" value="Submit"></input>
-				</form>
+						<div ref={this.setTextInputRef}></div>
+						<button type="button" onClick={this.addEtapeVoyage}>Ajouter une Ã©tape</button>
+
+						<input type="submit" value="Submit"></input>
+					</form>
+				</div>
 			</div>
 		);
 	}
 }
-
-export default AddVoyage;
