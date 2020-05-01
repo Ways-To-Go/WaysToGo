@@ -2,7 +2,7 @@
   "name": "waystogo",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/Ways-To-Go/WaysToGo",
+  "homepage": "https://github.com/WaysToGo",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
