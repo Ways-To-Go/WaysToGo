@@ -39,7 +39,7 @@ export class EnteteVoyage extends Component {
 	}
 
 	// retourne le nombre de jours
-	getDureeVoyage(etapes) {
+	getDureeVoyage1(etapes) {
 		if (etapes.length > 0) {
 			var d = new Date(etapes[etapes.length - 1].arrival) - new Date(etapes[0].departure);
 			const diffDays = Math.ceil(d / (1000 * 60 * 60 * 24)) + 1;
@@ -47,21 +47,21 @@ export class EnteteVoyage extends Component {
 		} else return 0;
 	}
 
-	getDureeVoyage(date1, date2) {
+	getDureeVoyage2(date1, date2) {
 			var d = new Date(date2) - new Date(date1);
 			const diffDays = Math.ceil(d / (1000 * 60 * 60 * 24)) + 1;
 			return diffDays;
 	}
 
 	// renvoi la date a afficher (mois - mois)
-	getMonthsDate(etapes) {
+	getMonthsDate1(etapes) {
 		var d = this.getDateDebut(etapes);
 		var a = this.getDateFin(etapes);
 		if (d != a) return this.getDateDebut(etapes) + " - " + this.getDateFin(etapes);
 		else return d;
 	}
 
-	getMonthsDate(date1, date2) {
+	getMonthsDate2(date1, date2) {
 		var d = new Date(date1);
 		var a = new Date(date2);
 		if (d.getMonth() != a.getMonth()) return this.monthNames[d.getMonth()] + " - " + this.monthNames[a.getMonth()];
@@ -72,12 +72,12 @@ export class EnteteVoyage extends Component {
 		return (
 			<div id="head">
 				<h2>{this.state.param.title}</h2>
-				<h5>{this.state.param.startdate ? this.getMonthsDate(this.state.param.startdate, this.state.param.enddate) : this.getMonthsDate(this.state.param.stages)}</h5>
+				<h5>{this.state.param.startdate === undefined ? this.getMonthsDate1(this.state.param.stages) : this.getMonthsDate2(this.state.param.startdate, this.state.param.enddate)}</h5>
 				<p class="ladescription">{'"' + this.state.param.description + '"'}</p>
 				<p>{this.state.param.vegan ? "Ce voyage est vegan" : "Ce voyage est signalé comme non-vegan"}</p>
 				<p>{this.state.param.ecological ? "Ce voyage est ecologique" : "Ce voyage est signalé comme non-ecologique"}</p>
 				<p>auteur : {this.state.param.author.firstName + " " + this.state.param.author.lastName}</p>
-				<p>Durée du voyage : {this.state.param.startdate ? this.getDureeVoyage(this.state.param.startdate, this.state.param.enddate) : this.getDureeVoyage(this.state.param.stages)} jours</p>
+				<p>Durée du voyage : {this.state.param.startdate ? this.getDureeVoyage2(this.state.param.startdate, this.state.param.enddate) : this.getDureeVoyage1(this.state.param.stages)} jours</p>
 			</div>
 		);
 	}
