@@ -213,7 +213,7 @@ export default class AddVoyage extends Component {
 		return (
 			<div>
 				<div class="topnav">
-					<a href="/">WaysToGo</a>
+					<a href="/WaysToGo/">WaysToGo</a>
 					<a class="active" href={"?show=save"}>Ajoutez un voyage</a>
 					<a href="#contact">Contact</a>
 					<a href="#about">About</a>
