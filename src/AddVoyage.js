@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import { EnteteVoyage } from "./ShowVoyage";
 import ReactDOM from 'react-dom';
+import NavigationBar from './NavigationBar';
 
 /*
  * https://stackoverflow.com/questions/14069421/show-an-image-preview-before-upload
@@ -212,12 +213,7 @@ export default class AddVoyage extends Component {
 	render() {
 		return (
 			<div>
-				<div class="topnav">
-					<a href="/">WaysToGo</a>
-					<a class="active" href={"?show=save"}>Ajoutez un voyage</a>
-					<a href="#contact">Contact</a>
-					<a href="#about">About</a>
-				</div>
+				<NavigationBar active="1" />
 
 				{this.state.startNewVoyage ?
 					<CreationVoyage name={this.name} vegan={this.vegan} ecolo={this.ecolo} addMyVoyage={this.addMyVoyage} description={this.description} startdate={this.startdate} enddate={this.enddate} />

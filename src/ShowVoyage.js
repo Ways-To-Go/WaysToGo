@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import { Map, TileLayer, Marker, Popup } from "react-leaflet";
+import NavigationBar from './NavigationBar';
 
 
 export class EnteteVoyage extends Component {
@@ -82,6 +83,39 @@ export class EnteteVoyage extends Component {
 	}
 }
 
+export class EtapeVoyage extends React.Component {
+	render() {
+		return (
+			/*<div>
+				<h1>Bonjour, monde !</h1>
+				<h2>Il est {this.props.date.toLocaleTimeString()}.</h2>
+			</div>*/
+
+			<div>
+				<div class="etape">
+					<p class="nomEtape">{this.props.etape.description}</p>
+
+					<p class="villedate_etape">{this.props.etape.city + " • " + new Date(this.props.etape.arrival)}</p>
+
+					{this.props.etape.photos.map((photo) => (
+						<div>
+							<img src={photo.path} alt={photo.title} height="150" width="200"></img>
+
+							<p>{photo.description}</p>
+						</div>
+					))}
+				</div>
+
+				{this.props.etape.departureTransport ?
+					<div class="transition_etape">
+						<p class="transitionTexte">• Moyen de transport : {this.props.etape.departureTransport.type}</p>
+					</div>
+					: ""}
+			</div>
+		);
+	}
+}
+
 
 class ShowVoyage extends Component {
 	constructor(props) {
@@ -104,6 +138,7 @@ class ShowVoyage extends Component {
 				parentVoyage.setState({
 					toRender:
 						<div>
+							<NavigationBar />
 							<div id="carteSide">
 								<Map id="ShowVoyageMap" center={[40.0, 3.0]} zoom={2}>
 									<TileLayer
@@ -125,27 +160,7 @@ class ShowVoyage extends Component {
 
 								<div id="etapes">
 									{param.stages.map((etape) => (
-										<div>
-											<div class="etape">
-												<p class="nomEtape">{etape.description}</p>
-
-												<p class="villedate_etape">{etape.city + " • " + new Date(etape.arrival)}</p>
-
-												{etape.photos.map((photo) => (
-													<div>
-														<img src={photo.path} alt={photo.title} height="150" width="200"></img>
-
-														<p>{photo.description}</p>
-													</div>
-												))}
-											</div>
-
-											{etape.departureTransport ?
-												<div class="transition_etape">
-													<p class="transitionTexte">• Moyen de transport : {etape.departureTransport.type}</p>
-												</div>
-												: ""}
-										</div>
+										<EtapeVoyage etape={etape} photos={etape.photos} />
 									))}
 								</div>
 							</div>
@@ -153,7 +168,7 @@ class ShowVoyage extends Component {
 				});
 			}
 		};
-		xhttp.open("GET", "http://wtg.aymerik-diebold.fr/api/trips/" + parentVoyage.props.id, true);
+		xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/trips/" + parentVoyage.props.id, true);
 		xhttp.send();
 	}
 

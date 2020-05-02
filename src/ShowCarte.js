@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Map, TileLayer, Marker, Popup } from "react-leaflet";
 import "./App.css";
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import NavigationBar from './NavigationBar';
 
 export default class ShowCarte extends Component {
 	constructor(props) {
@@ -36,39 +37,20 @@ export default class ShowCarte extends Component {
 		xhttp.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				parentThis.setState({
-					voyages: JSON.stringify(this.response),
+					voyages: JSON.parse(this.response)['hydra:member'],
 				});
 				//console.log(parentThis.state.voyages);
 			}
 		};
-		xhttp.open("GET", "http://wtg.aymerik-diebold.fr/api/trips", true);
+		xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/trips", true);
 		xhttp.send();
 	}
-
-
-
-	/*getLogoStyle = () => {
-		return {
-			position: "absolute",
-			zIndex: 1,
-			left: "40px",
-		};
-	};
-	<h1 style={this.getLogoStyle()}>WaysToGo</h1>
-	*/
 
 	render() {
 		return (
 			<div className="App">
 
-				<div class="topnav">
-					<a class="active" href="/">WaysToGo</a>
-					<a href={"?show=save"}>Ajoutez un voyage</a>
-					<a href="#contact">Contact</a>
-					<a href="#about">About</a>
-				</div>
-
-
+				<NavigationBar active="0"/>
 
 				<Map id="principalMap" center={[this.state.lat, this.state.lng]} zoom={this.state.zoom}>
 					<TileLayer
@@ -76,14 +58,15 @@ export default class ShowCarte extends Component {
 						url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 					/>
 
-					{this.state.liste_voyage.map((coord, city) => (
-						coord[0].x != undefined ?
-							<Marker position={[coord[0].y, coord[0].x]}>
+					{this.state.voyages.map((voyage) => (
+						voyage.stages.map((etape) => (
+							<Marker position={[etape.lng, etape.lat]}>
 								<Popup>
-									<h1>{'Nom à venir'}</h1>
-									<a href={"?show=trip&id=1"}>Cliquez</a>
+									<h1>{voyage.title}</h1>
+									<a href={"?show=trip&id=" + voyage.id}>Cliquez</a>
 								</Popup>
-							</Marker> : ""
+								</Marker>
+						))
 					))}
 				</Map>
 			</div>
