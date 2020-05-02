@@ -140,18 +140,19 @@ class ShowVoyage extends Component {
 						<div>
 							<NavigationBar />
 							<div id="carteSide">
-								<Map id="ShowVoyageMap" center={[40.0, 3.0]} zoom={2}>
+								<Map id="ShowVoyageMap" center={[40.0, 3.0]} zoom={1}>
 									<TileLayer
 										attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 										url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 									/>
 
-									<Marker position={[40.0, 3.0]}>
-										<Popup>
-											<h1>{'Nom à venir'}</h1>
-											<a href={"?show=trip&id=1"}>Cliquez</a>
-										</Popup>
-									</Marker>
+									{param.stages.map((etape) => (
+										<Marker position={[etape.lng, etape.lat]}>
+												<Popup>
+													<h1>{etape.description}</h1>
+												</Popup>
+											</Marker>
+										))}
 								</Map>
 							</div>
 
