@@ -71,12 +71,22 @@ export default class NavigationBar extends Component {
         ) : (
           <a href="#about">About</a>
         )}
-        <a class="connection" onClick={this.showLogin}>
-          Login
-        </a>
-        <a class="connection" onClick={this.showRegister}>
-          Register
-        </a>
+        {this.props.connected ? (
+          <a class={this.props.active == 4 ? "active" : ""} href="#profile">
+            Profile
+          </a>
+        ) : (
+          <div>
+            <a class="connection" onClick={this.showLogin}>
+              Login
+            </a>
+
+            <a class="connection" onClick={this.showRegister}>
+              Register
+            </a>
+          </div>
+        )}
+
         <div id="login" style={this.getStyleLogin()}>
           <p>Email</p>
           <input
