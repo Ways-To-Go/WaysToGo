@@ -6,10 +6,28 @@ export class Profile extends Component {
     return (
       <div className="profile">
         <NavigationBar active="4" connected={this.props.connected} />
-        <h1>Welcome</h1>
+        <div className="profileContainer" style={containerStyle}>
+          <h1>My Profile</h1>
+          <div class="profileBox" style={boxStyle}>
+            <p class="left-profile">Email</p>
+            <p class="right-profile">john.doe</p>
+          </div>
+        </div>
       </div>
     );
   }
 }
+
+const containerStyle = {
+  textAlign: "center",
+  border: "solid purple 3px",
+  width: "50%",
+  margin: "auto",
+};
+
+const boxStyle = {
+  display: "flex",
+  justifyContent: "space-around",
+};
 
 export default Profile;
