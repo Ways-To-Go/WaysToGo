@@ -5,6 +5,7 @@ import ShowVoyage from "./ShowVoyage.js";
 import AddVoyage from "./AddVoyage.js";
 import ShowCarte from "./ShowCarte.js";
 import Profile from "./Profile";
+import SearchResult from "./SearchResult.js";
 
 export default class App extends Component {
   constructor(props) {
@@ -44,6 +45,8 @@ export default class App extends Component {
       );
     } else if (this.state.pageActuelle === "profile") {
       return <Profile connected={this.state.connected} />;
+    } else if (this.state.pageActuelle === "research") {
+            return (<SearchResult />)
     } else {
       return (
         <ShowCarte connected={this.state.connected} connect={this.connect} />

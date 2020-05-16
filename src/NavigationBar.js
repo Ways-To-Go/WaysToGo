@@ -116,6 +116,12 @@ export default class NavigationBar extends Component {
             </a>
           </div>
         )}
+		{this.props.active == 5 ? (
+          <a class="active" href={"?show=research"}>
+			Recherche 
+		  </a> ) : (
+			<a href={"?show=research"}>Recherche</a> )
+        )}
 
         <div id="login" style={this.getStyleLogin()}>
           <p>Email</p>
