@@ -4,18 +4,18 @@ import "./App.css";
 export default class NavigationBar extends Component {
 	render() {
 		return (
-			<div class="topnav">
-				{this.props.active == 0 ?
-					<a class="active" href="/WaysToGo/">WaysToGo</a> : <a href="/WaysToGo/">WaysToGo</a>
+			<div className="topnav">
+				{this.props.active === 0 ?
+					<a className="active" href={"/WaysToGo/?token=" + this.props.token}>WaysToGo</a> : <a href={"/WaysToGo/?token=" + this.props.token}>WaysToGo</a>
 				}
-				{this.props.active == 1 ?
-					<a class="active" href={"?show=save"}>Ajouter un voyage</a> : <a href={"?show=save"}>Ajouter un voyage</a>
+				{this.props.active === 1 ?
+					<a className="active" href={"?show=save&token=" + this.props.token}>New trip</a> : <a href={"?show=save&token=" + this.props.token}>New trip</a>
 				}
-				{this.props.active == 2 ?
-					<a class="active" href="#contact">Contact</a> : <a href="#contact">Contact</a>
+				{this.props.active === 2 ?
+					<a className="active" href="#contact" style={{ backgroundColor: "red" }}>Contact</a> : <a style={{ backgroundColor: "red" }} href="#contact">Contact</a>
 				}
-				{this.props.active == 3 ?
-					<a class="active" href="#about">About</a> : <a href="#about">About</a>
+				{this.props.active === 3 ?
+					<a className="active" href="#about" style={{ backgroundColor: "red" }}>About</a> : <a style={{ backgroundColor: "red" }} href="#about">About</a>
 				}
 			</div>
 		);
