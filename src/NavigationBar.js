@@ -25,10 +25,34 @@ export default class NavigationBar extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  onSubmit = (e) => {
+  onSubmitLogin = (e) => {
     e.preventDefault();
     console.log("Submit");
     //get token from api
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    Axios.post(
+      "https://wtg.aymerik-diebold.fr/login_check",
+      {
+        username: this.state.email,
+        password: this.state.password,
+      },
+      { headers }
+    )
+      .then((res) => {
+        console.log(res);
+        this.props.connect(res.data.token);
+        this.setState({ showLogin: false });
+      })
+      .catch((err) => {
+        throw err;
+      });
+  };
+
+  onSumbitRegister = (e) => {
+    e.preventDefault();
+    //todo: register to api
   };
 
   getStyleLogin = () => {
@@ -115,7 +139,7 @@ export default class NavigationBar extends Component {
             type="submit"
             name="submit"
             value="Login"
-            onClick={this.onSubmit}
+            onClick={this.onSubmitLogin}
           />
         </div>
 
@@ -167,7 +191,7 @@ export default class NavigationBar extends Component {
             type="submit"
             name="submit"
             value="Login"
-            onClick={this.onSubmit}
+            onClick={this.onSubmitRegister}
           />
         </div>
       </div>
