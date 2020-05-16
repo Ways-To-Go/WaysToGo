@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Cookies from "universal-cookie";
 import "./App.css";
 import ShowVoyage from "./ShowVoyage.js";
 import AddVoyage from "./AddVoyage.js";
@@ -9,18 +10,23 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
+    const cookies = new Cookies();
+    const token = cookies.get("token") ? cookies.get("token") : false;
+
     const urlParams = new URLSearchParams(window.location.search);
     this.state = {
       pageActuelle: urlParams.get("show"), // on recupere la page a afficher via les arguments de l'URL
       trip: urlParams.get("id"),
-      connected: false,
-      token: "",
+      connected: token ? true : false,
+      token: token ? token : "",
     };
   }
 
   connect = (token) => {
     console.log("Connected!");
     this.setState({ connected: true, token });
+    const cookies = new Cookies();
+    cookies.set("token", token, { path: "/" });
   };
 
   render() {
