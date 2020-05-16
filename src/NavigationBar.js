@@ -72,7 +72,10 @@ export default class NavigationBar extends Component {
           <a href="#about">About</a>
         )}
         {this.props.connected ? (
-          <a class={this.props.active == 4 ? "active" : ""} href="#profile">
+          <a
+            class={this.props.active == 4 ? "active" : ""}
+            href="?show=profile"
+          >
             Profile
           </a>
         ) : (
