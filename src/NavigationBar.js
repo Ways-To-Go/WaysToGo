@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
+import Axios from "axios";
 
 export default class NavigationBar extends Component {
   state = {
@@ -8,6 +9,8 @@ export default class NavigationBar extends Component {
     email: "",
     password: "",
     password2: "",
+    firstname: "",
+    lastname: "",
   };
 
   showLogin = (e) => {
@@ -123,7 +126,25 @@ export default class NavigationBar extends Component {
             name="email"
             onChange={this.onChange}
             value={this.state.email}
-            placeholder="john.doe@mail.com"
+            placeholder="ex. john.doe@mail.com"
+          />
+
+          <p>Firstname</p>
+          <input
+            type="text"
+            name="firstname"
+            onChange={this.onChange}
+            value={this.state.firstname}
+            placeholder="ex. John"
+          />
+
+          <p>Lastname</p>
+          <input
+            type="text"
+            name="lastname"
+            onChange={this.onChange}
+            value={this.state.lastname}
+            placeholder="ex. Doe"
           />
 
           <p>Password</p>
