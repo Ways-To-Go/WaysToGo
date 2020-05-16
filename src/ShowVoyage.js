@@ -3,6 +3,20 @@ import "./App.css";
 import { Map, TileLayer, Marker, Popup } from "react-leaflet";
 import NavigationBar from "./NavigationBar";
 
+// show the head of the trip
+/* Need a parameter param like :
+ * param = {
+ * title = string
+ * ?startdate = string in a good date format (aaaa-mm-dd)
+ * vegan = bool
+ * ecological = bool
+ * author {
+ *		firstName = string
+ *		lastName = string
+ *	}
+ *	stages = list of stage
+ * }
+ */
 export class EnteteVoyage extends Component {
   constructor(props) {
     super(props);
@@ -27,10 +41,13 @@ export class EnteteVoyage extends Component {
   }
 
   /* TODO :
-   * fonction qui retourne le nombre d'étapes
    * qui retourne le nombre de photos
-   * qui retourne le nombre de pays
+   * qui retourne le nombre de pays ou passe le voyage
    */
+
+  getStageNumber(etapes) {
+    return etapes.length;
+  }
 
   // retourne le mois de debut
   getDateDebut(etapes) {
@@ -67,17 +84,19 @@ export class EnteteVoyage extends Component {
 
   // renvoi la date a afficher (mois - mois)
   getMonthsDate1(etapes) {
-    var d = this.getDateDebut(etapes);
-    var a = this.getDateFin(etapes);
-    if (d != a)
-      return this.getDateDebut(etapes) + " - " + this.getDateFin(etapes);
-    else return d;
+    if (etapes.length > 0) {
+      var d = this.getDateDebut(etapes);
+      var a = this.getDateFin(etapes);
+      if (d !== a)
+        return this.getDateDebut(etapes) + " - " + this.getDateFin(etapes);
+      else return d;
+    } else return "";
   }
 
   getMonthsDate2(date1, date2) {
     var d = new Date(date1);
     var a = new Date(date2);
-    if (d.getMonth() != a.getMonth())
+    if (d.getMonth() !== a.getMonth())
       return (
         this.monthNames[d.getMonth()] + " - " + this.monthNames[a.getMonth()]
       );
@@ -86,15 +105,12 @@ export class EnteteVoyage extends Component {
 
   render() {
     return (
-      <div id="head">
+      <div ref={this.state.param.refHead} id="head">
         <h2>{this.state.param.title}</h2>
         <h5>
-          {this.state.param.startdate === undefined
-            ? this.getMonthsDate1(this.state.param.stages)
-            : this.getMonthsDate2(
-                this.state.param.startdate,
-                this.state.param.enddate
-              )}
+          {this.state.param.startdate
+            ? ""
+            : this.getMonthsDate1(this.state.param.stages)}
         </h5>
         <p class="ladescription">{'"' + this.state.param.description + '"'}</p>
         <p>
@@ -123,19 +139,32 @@ export class EnteteVoyage extends Component {
             : this.getDureeVoyage1(this.state.param.stages)}{" "}
           jours
         </p>
+        {this.state.param.edit ? (
+          <div>
+            <label for="files2" style={{ border: "2px solid black" }}>
+              Change cover image
+            </label>
+            <input
+              id="files2"
+              style={{ visibility: "hidden" }}
+              ref={this.state.param.refHead}
+              type="file"
+              accept="image/*"
+              onChange={this.state.param.changeCover}
+            />
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     );
   }
 }
 
+// render a step
 export class EtapeVoyage extends React.Component {
   render() {
     return (
-      /*<div>
-				<h1>Bonjour, monde !</h1>
-				<h2>Il est {this.props.date.toLocaleTimeString()}.</h2>
-			</div>*/
-
       <div>
         <div class="etape">
           <p class="nomEtape">{this.props.etape.description}</p>
@@ -144,16 +173,17 @@ export class EtapeVoyage extends React.Component {
             {this.props.etape.city + " • " + new Date(this.props.etape.arrival)}
           </p>
 
-          {this.props.etape.photos.map((photo) => (
+          {this.props.etape.photos.map((photo, i) => (
             <div>
               <img
+                key={i}
                 src={photo.path}
                 alt={photo.title}
                 height="150"
                 width="200"
               ></img>
 
-              <p>{photo.description}</p>
+              <p key={i}>{photo.description}</p>
             </div>
           ))}
         </div>
@@ -188,8 +218,9 @@ class ShowVoyage extends Component {
   loadDoc(parentVoyage) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
+      if (this.readyState === 4 && this.status === 200) {
         const param = JSON.parse(this.responseText);
+        console.log("Voyage : " + param);
         parentVoyage.setState({
           toRender: (
             <div>
@@ -197,7 +228,6 @@ class ShowVoyage extends Component {
                 connected={parentVoyage.props.connected}
                 connect={parentVoyage.props.connect}
               />
-
               <div id="carteSide">
                 <Map id="ShowVoyageMap" center={[40.0, 3.0]} zoom={1}>
                   <TileLayer
@@ -219,6 +249,7 @@ class ShowVoyage extends Component {
                 <EnteteVoyage param={param} />
 
                 <div id="etapes">
+                  {console.log(param)}
                   {param.stages.map((etape) => (
                     <EtapeVoyage etape={etape} photos={etape.photos} />
                   ))}

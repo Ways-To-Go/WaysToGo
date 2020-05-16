@@ -11,7 +11,7 @@ export default class App extends Component {
     super(props);
 
     const cookies = new Cookies();
-    const token = cookies.get("token") ? cookies.get("token") : false;
+    const token = cookies.get("tokjen") ? cookies.get("token") : false;
 
     const urlParams = new URLSearchParams(window.location.search);
     this.state = {
@@ -26,16 +26,22 @@ export default class App extends Component {
     console.log("Connected!");
     this.setState({ connected: true, token });
     const cookies = new Cookies();
-    cookies.set("token", token, { path: "/" });
+    cookies.set("tokjen", token, { path: "/" });
   };
 
   render() {
     if (this.state.pageActuelle === "trip") {
       return (
-        <ShowVoyage id={this.state.trip} connected={this.state.connected} />
+        <ShowVoyage
+          id={this.state.trip}
+          connected={this.state.connected}
+          connect={this.connect}
+        />
       );
     } else if (this.state.pageActuelle === "save") {
-      return <AddVoyage connected={this.state.connected} />;
+      return (
+        <AddVoyage connected={this.state.connected} connect={this.connect} />
+      );
     } else if (this.state.pageActuelle === "profile") {
       return <Profile connected={this.state.connected} />;
     } else {

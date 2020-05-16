@@ -1,4 +1,5 @@
 @import url("navigationBarCSS.css"); /* The top navigation bar */
+@import url("popupcss.css"); /* CSS for popup addEtape in addVoyage */
 
 html, body {
 	margin: 0;
