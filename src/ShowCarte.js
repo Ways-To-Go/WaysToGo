@@ -23,13 +23,11 @@ export default class ShowCarte extends Component {
     const provider = new OpenStreetMapProvider();
     {
       this.state.villes.map((city) =>
-        provider
-          .search({ query: city })
-          .then((result) =>
-            this.setState({
-              liste_voyage: this.state.liste_voyage.concat([result, city]),
-            })
-          )
+        provider.search({ query: city }).then((result) =>
+          this.setState({
+            liste_voyage: this.state.liste_voyage.concat([result, city]),
+          })
+        )
       );
     }
   }
@@ -51,7 +49,11 @@ export default class ShowCarte extends Component {
   render() {
     return (
       <div className="App">
-        <NavigationBar active="0" connected={this.props.connected} />
+        <NavigationBar
+          active="0"
+          connected={this.props.connected}
+          connect={this.props.connect}
+        />
 
         <Map
           id="principalMap"

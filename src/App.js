@@ -13,10 +13,15 @@ export default class App extends Component {
     this.state = {
       pageActuelle: urlParams.get("show"), // on recupere la page a afficher via les arguments de l'URL
       trip: urlParams.get("id"),
-      connected: true,
+      connected: false,
       token: "",
     };
   }
+
+  connect = (token) => {
+    console.log("Connected!");
+    this.setState({ connected: true, token });
+  };
 
   render() {
     if (this.state.pageActuelle === "trip") {
@@ -28,7 +33,9 @@ export default class App extends Component {
     } else if (this.state.pageActuelle === "profile") {
       return <Profile connected={this.state.connected} />;
     } else {
-      return <ShowCarte connected={this.state.connected} />;
+      return (
+        <ShowCarte connected={this.state.connected} connect={this.connect} />
+      );
     }
   }
 }

@@ -193,7 +193,10 @@ class ShowVoyage extends Component {
         parentVoyage.setState({
           toRender: (
             <div>
-              <NavigationBar connected={parentVoyage.props.connected} />
+              <NavigationBar
+                connected={parentVoyage.props.connected}
+                connect={parentVoyage.props.connect}
+              />
 
               <div id="carteSide">
                 <Map id="ShowVoyageMap" center={[40.0, 3.0]} zoom={1}>

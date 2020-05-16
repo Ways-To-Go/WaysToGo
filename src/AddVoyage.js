@@ -286,7 +286,11 @@ export default class AddVoyage extends Component {
   render() {
     return (
       <div>
-        <NavigationBar active="1" connected={this.props.connected} />
+        <NavigationBar
+          active="1"
+          connected={this.props.connected}
+          connect={this.props.connect}
+        />
 
         {this.state.startNewVoyage ? (
           <CreationVoyage
