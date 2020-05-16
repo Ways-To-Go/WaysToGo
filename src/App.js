@@ -11,7 +11,7 @@ export default class App extends Component {
     super(props);
 
     const cookies = new Cookies();
-    const token = cookies.get("tokjen") ? cookies.get("token") : false;
+    const token = cookies.get("token") ? cookies.get("token") : false;
 
     const urlParams = new URLSearchParams(window.location.search);
     this.state = {
@@ -26,7 +26,7 @@ export default class App extends Component {
     console.log("Connected!");
     this.setState({ connected: true, token });
     const cookies = new Cookies();
-    cookies.set("tokjen", token, { path: "/" });
+    cookies.set("token", token, { path: "/" });
   };
 
   render() {
