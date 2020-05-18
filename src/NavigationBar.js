@@ -11,6 +11,8 @@ export default class NavigationBar extends Component {
     password2: "",
     firstname: "",
     lastname: "",
+    registerSuccess: "",
+    registerMessage: "",
   };
 
   showLogin = (e) => {
@@ -27,7 +29,7 @@ export default class NavigationBar extends Component {
 
   onSubmitLogin = (e) => {
     e.preventDefault();
-    console.log("Submit");
+    console.log("Login attempt");
     //get token from api
     const headers = {
       "Content-Type": "application/json",
@@ -46,13 +48,63 @@ export default class NavigationBar extends Component {
         this.setState({ showLogin: false });
       })
       .catch((err) => {
+        console.log("error");
         throw err;
       });
   };
 
-  onSumbitRegister = (e) => {
+  onSubmitRegister = (e) => {
     e.preventDefault();
+    console.log("Register attempt");
     //todo: register to api
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    if (this.state.password !== this.state.password2) {
+      this.setState({ registerMessage: "Your passwords do not match :(" });
+    } else if (
+      this.state.email === "" ||
+      this.state.password === "" ||
+      this.state.password2 === ""
+    ) {
+      this.setState({ registerMessage: "Email and Password are required" });
+    } else {
+      Axios.post(
+        "https://wtg.aymerik-diebold.fr/register",
+        {
+          email: this.state.email,
+          password: this.state.password,
+          firstname: this.state.firstname,
+          lastname: this.state.lastname,
+        },
+        { headers }
+      )
+        .then((res) => {
+          if (res.data.success === "true") {
+            console.log("Registration successful!");
+            this.setState({
+              registerSuccess:
+                "Your account has been created! You can now login in",
+              email: "",
+              password: "",
+              password2: "",
+              firstname: "",
+              lastname: "",
+              showRegister: false,
+              showLogin: true,
+            });
+          } else {
+            console.log("Registration failed :(");
+            this.setState({
+              registerMessage: "This email address is already registered",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("error");
+          throw err;
+        });
+    }
   };
 
   getStyleLogin = () => {
@@ -116,13 +168,17 @@ export default class NavigationBar extends Component {
             </a>
           </div>
         )}
-	{this.props.active == 5 ? (
-		<a class="active" href={"?show=research"}> Recherche </a> 
-		) : (
-		<a href={"?show=research"}>Recherche</a> 
+        {this.props.active == 5 ? (
+          <a class="active" href={"?show=research"}>
+            {" "}
+            Recherche{" "}
+          </a>
+        ) : (
+          <a href={"?show=research"}>Recherche</a>
         )}
 
         <div id="login" style={this.getStyleLogin()}>
+          <p>{this.state.registerSuccess}</p>
           <p>Email</p>
           <input
             type="text"
@@ -149,6 +205,7 @@ export default class NavigationBar extends Component {
         </div>
 
         <div id="register" style={this.getStyleRegister()}>
+          <p>{this.state.registerMessage}</p>
           <p>Email</p>
           <input
             type="text"
