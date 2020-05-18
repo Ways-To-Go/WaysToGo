@@ -1,23 +1,205 @@
 import React, { Component } from "react";
 import "./App.css";
+import Axios from "axios";
 
 export default class NavigationBar extends Component {
-	render() {
-		return (
-			<div className="topnav">
-				{this.props.active === 0 ?
-					<a className="active" href={"/WaysToGo/?token=" + this.props.token}>WaysToGo</a> : <a href={"/WaysToGo/?token=" + this.props.token}>WaysToGo</a>
-				}
-				{this.props.active === 1 ?
-					<a className="active" href={"?show=save&token=" + this.props.token}>New trip</a> : <a href={"?show=save&token=" + this.props.token}>New trip</a>
-				}
-				{this.props.active === 2 ?
-					<a className="active" href="#contact" style={{ backgroundColor: "red" }}>Contact</a> : <a style={{ backgroundColor: "red" }} href="#contact">Contact</a>
-				}
-				{this.props.active === 3 ?
-					<a className="active" href="#about" style={{ backgroundColor: "red" }}>About</a> : <a style={{ backgroundColor: "red" }} href="#about">About</a>
-				}
-			</div>
-		);
-	}
+  state = {
+    showLogin: false,
+    showRegister: false,
+    email: "",
+    password: "",
+    password2: "",
+    firstname: "",
+    lastname: "",
+  };
+
+  showLogin = (e) => {
+    this.setState({ showLogin: !this.state.showLogin, showRegister: false });
+  };
+
+  showRegister = (e) => {
+    this.setState({ showRegister: !this.state.showRegister, showLogin: false });
+  };
+
+  onChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  onSubmitLogin = (e) => {
+    e.preventDefault();
+    console.log("Submit");
+    //get token from api
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    Axios.post(
+      "https://wtg.aymerik-diebold.fr/login_check",
+      {
+        username: this.state.email,
+        password: this.state.password,
+      },
+      { headers }
+    )
+      .then((res) => {
+        console.log(res);
+        this.props.connect(res.data.token);
+        this.setState({ showLogin: false });
+      })
+      .catch((err) => {
+        throw err;
+      });
+  };
+
+  onSumbitRegister = (e) => {
+    e.preventDefault();
+    //todo: register to api
+  };
+
+  getStyleLogin = () => {
+    return {
+      display: this.state.showLogin ? "block" : "none",
+    };
+  };
+
+  getStyleRegister = () => {
+    return {
+      display: this.state.showRegister ? "block" : "none",
+    };
+  };
+
+  render() {
+    return (
+      <div class="topnav">
+        {this.props.active == 0 ? (
+          <a class="active" href="/WaysToGo/">
+            WaysToGo
+          </a>
+        ) : (
+          <a href="/WaysToGo/">WaysToGo</a>
+        )}
+        {this.props.active == 1 ? (
+          <a class="active" href={"?show=save"}>
+            Ajouter un voyage
+          </a>
+        ) : (
+          <a href={"?show=save"}>Ajouter un voyage</a>
+        )}
+        {this.props.active == 2 ? (
+          <a class="active" href="#contact">
+            Contact
+          </a>
+        ) : (
+          <a href="#contact">Contact</a>
+        )}
+        {this.props.active == 3 ? (
+          <a class="active" href="#about">
+            About
+          </a>
+        ) : (
+          <a href="#about">About</a>
+        )}
+        {this.props.connected ? (
+          <a
+            class={this.props.active == 4 ? "active" : ""}
+            href="?show=profile"
+          >
+            Profile
+          </a>
+        ) : (
+          <div>
+            <a class="connection" onClick={this.showLogin}>
+              Login
+            </a>
+
+            <a class="connection" onClick={this.showRegister}>
+              Register
+            </a>
+          </div>
+        )}
+	{this.props.active == 5 ? (
+		<a class="active" href={"?show=research"}> Recherche </a> 
+		) : (
+		<a href={"?show=research"}>Recherche</a> 
+        )}
+
+        <div id="login" style={this.getStyleLogin()}>
+          <p>Email</p>
+          <input
+            type="text"
+            name="email"
+            onChange={this.onChange}
+            value={this.state.email}
+            placeholder="john.doe@mail.com"
+          />
+
+          <p>Password</p>
+          <input
+            type="password"
+            name="password"
+            onChange={this.onChange}
+            value={this.state.password}
+          />
+
+          <input
+            type="submit"
+            name="submit"
+            value="Login"
+            onClick={this.onSubmitLogin}
+          />
+        </div>
+
+        <div id="register" style={this.getStyleRegister()}>
+          <p>Email</p>
+          <input
+            type="text"
+            name="email"
+            onChange={this.onChange}
+            value={this.state.email}
+            placeholder="ex. john.doe@mail.com"
+          />
+
+          <p>Firstname</p>
+          <input
+            type="text"
+            name="firstname"
+            onChange={this.onChange}
+            value={this.state.firstname}
+            placeholder="ex. John"
+          />
+
+          <p>Lastname</p>
+          <input
+            type="text"
+            name="lastname"
+            onChange={this.onChange}
+            value={this.state.lastname}
+            placeholder="ex. Doe"
+          />
+
+          <p>Password</p>
+          <input
+            type="password"
+            name="password"
+            onChange={this.onChange}
+            value={this.state.password}
+          />
+
+          <p>Confirm Password</p>
+          <input
+            type="password"
+            name="password2"
+            onChange={this.onChange}
+            value={this.state.password2}
+          />
+
+          <input
+            type="submit"
+            name="submit"
+            value="Login"
+            onClick={this.onSubmitRegister}
+          />
+        </div>
+      </div>
+    );
+  }
 }

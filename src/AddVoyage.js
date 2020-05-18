@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "./App.css";
 import { EnteteVoyage } from "./ShowVoyage";
-import ReactDOM from 'react-dom';
-import NavigationBar from './NavigationBar';
+import ReactDOM from "react-dom";
+import NavigationBar from "./NavigationBar";
 
 
 // Gere l'ajout d'image et l'affichage. https://stackoverflow.com/questions/38049966/get-image-preview-before-uploading-in-react
@@ -234,7 +234,6 @@ class UneEtape extends React.Component {
 		)
 	}
 }
-
 
 // seconde vue de la création de voyage : permet d'ajouter des etapes
 class CreationVoyageAjoutEtapes extends React.Component {
@@ -544,8 +543,6 @@ class CreationVoyage extends React.Component {
 	}
 }
 
-
-
 export default class AddVoyage extends Component {
 	constructor(props) {
 		super(props);
@@ -626,7 +623,7 @@ export default class AddVoyage extends Component {
 	render() {
 		return (
 			<div>
-				<NavigationBar active={1} token={this.props.token} />
+				<NavigationBar active={1} token={this.props.token} connected={this.props.connected} connect={this.props.connect} />
 
 				{this.state.startNewVoyage ?
 					!this.state.chargement ?

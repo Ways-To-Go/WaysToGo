@@ -13,6 +13,8 @@
 		font-size: 17px;
 	}
 
+	
+
 		.topnav a:hover {
 			background-color: #ddd;
 			color: black;
@@ -22,3 +24,14 @@
 			background-color: #4CAF50;
 			color: white;
 		}
+
+    #login, #register {
+		z-index: 1;
+		position: absolute;
+		right:0;
+		top: 50px;
+		color: white;
+		background-color: #333;
+		padding: 15px;
+		display: none;
+	}
