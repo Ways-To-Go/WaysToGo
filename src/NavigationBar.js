@@ -83,7 +83,7 @@ export default class NavigationBar extends Component {
         { headers }
       )
         .then((res) => {
-          if (res.data.success === "true") {
+          if (res.data.success === true) {
             console.log("Registration successful!");
             this.setState({
               registerSuccess:
