@@ -48,7 +48,10 @@ export default class NavigationBar extends Component {
         this.setState({ showLogin: false });
       })
       .catch((err) => {
-        console.log("error");
+        console.log("Login failed");
+        this.setState({
+          registerSuccess: "Email/password combination not found :(",
+        });
         throw err;
       });
   };
@@ -84,7 +87,7 @@ export default class NavigationBar extends Component {
             console.log("Registration successful!");
             this.setState({
               registerSuccess:
-                "Your account has been created! You can now login in",
+                "Your account has been created! You can now log in",
               email: "",
               password: "",
               password2: "",
