@@ -6,6 +6,7 @@ import AddVoyage from "./AddVoyage.js";
 import ShowCarte from "./ShowCarte.js";
 import Profile from "./Profile";
 import SearchResult from "./SearchResult.js";
+import Axios from "axios";
 
 export default class App extends Component {
   constructor(props) {
@@ -21,6 +22,23 @@ export default class App extends Component {
       connected: token ? true : false,
       token: token ? token : "",
     };
+  }
+
+  componentDidMount() {
+    if (this.state.token) {
+      console.log("Connected!");
+      Axios.get("https://wtg.aymerik-diebold.fr/api/me", {
+        headers: { Authorization: "Bearer " + this.state.token },
+      })
+        .then((res) => {
+          this.setState({ connected: res.data.id });
+        })
+        .catch((err) => {
+          console.log("wut");
+          console.log(this.state.token);
+          throw err;
+        });
+    }
   }
 
   connect = (token) => {
@@ -41,7 +59,11 @@ export default class App extends Component {
       );
     } else if (this.state.pageActuelle === "save") {
       return (
-        <AddVoyage connected={this.state.connected} connect={this.connect} />
+        <AddVoyage
+          token={this.state.token}
+          connected={this.state.connected}
+          connect={this.connect}
+        />
       );
     } else if (this.state.pageActuelle === "profile") {
       return (
