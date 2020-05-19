@@ -36,6 +36,9 @@ export default class App extends Component {
         .catch((err) => {
           console.log("wut");
           console.log(this.state.token);
+          this.setState({ connected: false, token: "" });
+          const cookies = new Cookies();
+          cookies.remove("token", { path: "/" });
           throw err;
         });
     }
