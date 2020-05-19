@@ -44,9 +44,11 @@ export default class App extends Component {
         <AddVoyage connected={this.state.connected} connect={this.connect} />
       );
     } else if (this.state.pageActuelle === "profile") {
-      return <Profile connected={this.state.connected} />;
+      return (
+        <Profile connected={this.state.connected} token={this.state.token} />
+      );
     } else if (this.state.pageActuelle === "research") {
-            return (<SearchResult />)
+      return <SearchResult />;
     } else {
       return (
         <ShowCarte connected={this.state.connected} connect={this.connect} />
