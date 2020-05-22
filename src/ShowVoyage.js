@@ -134,7 +134,8 @@ export class EnteteVoyage extends Component {
 				superThis.saveTripButton.current.style.visibility = "visible";
 
 				var listformat = [];
-				JSON.parse(this.responseText).recoredTrips.forEach(function (item) {
+				//console.log(JSON.parse(this.responseText));
+				JSON.parse(this.responseText).recordedTrips.forEach(function (item) {
 					listformat.push(item["@id"]);
 				});
 
@@ -160,7 +161,7 @@ export class EnteteVoyage extends Component {
 					{ headers }
 				)
 					.then((res) => {
-						console.log(res);
+						//console.log(res);
 						superThis.props.connect(res.data.token);
 						superThis.verifIfTripAlreadySaved();
 					})
@@ -169,9 +170,9 @@ export class EnteteVoyage extends Component {
 					});
 			}
 		};
-		xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/users/10", true);
+		xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/users/" + superThis.getCookie("id"), true);
 		xhttp.setRequestHeader('Content-Type', 'application/json');
-		xhttp.setRequestHeader('Authorization', 'Bearer ' + this.getCookie("token"));
+		xhttp.setRequestHeader('Authorization', 'Bearer ' + superThis.getCookie("token"));
 		xhttp.send();
 	}
 
@@ -180,7 +181,7 @@ export class EnteteVoyage extends Component {
 	};
 
 	saveTrip() {
-		console.log(document.cookie);
+		//console.log(document.cookie);
 
 		// we first retrieve user already saved Trips
 		var xhttp = new XMLHttpRequest();
@@ -192,7 +193,7 @@ export class EnteteVoyage extends Component {
 
 				var res = JSON.parse(this.responseText);
 				var listformat = [];
-				res.recoredTrips.forEach(function (item) {
+				res.recordedTrips.forEach(function (item) {
 					listformat.push(item["@id"]);
 				});
 
@@ -206,17 +207,18 @@ export class EnteteVoyage extends Component {
 
 					var xhttp2 = new XMLHttpRequest();
 					xhttp2.onreadystatechange = function () {
+						//console.log(this.responseText);
 						if (this.readyState === 4 && this.status === 200) {
 							superThis.saveTripButton.current.innerHTML = "Save this trip";
 						}
 					};
-					xhttp2.open("PATCH", "https://wtg.aymerik-diebold.fr/api/users/10", true);
+					xhttp2.open("PATCH", "https://wtg.aymerik-diebold.fr/api/users/" + superThis.getCookie("id"), true);
 					xhttp2.setRequestHeader('Content-Type', 'application/merge-patch+json');
 					xhttp2.setRequestHeader('Authorization', 'Bearer ' + superThis.getCookie("token"));
 
 					//console.log([...new Set(listformat)]);
 					xhttp2.send(JSON.stringify({
-						"recoredTrips": listformat // to onsure each trip is saved only one time
+						"recordedTrips": listformat // to onsure each trip is saved only one time
 					}));
 
 
@@ -227,23 +229,25 @@ export class EnteteVoyage extends Component {
 					// then we add the new trip to the olders
 					var xhttp2 = new XMLHttpRequest();
 					xhttp2.onreadystatechange = function () {
+						//console.log(this.responseText);
 						if (this.readyState === 4 && this.status === 200) {
 							superThis.saveTripButton.current.innerHTML = "Trip saved :) Click to cancel";
 						}
 					};
-					xhttp2.open("PATCH", "https://wtg.aymerik-diebold.fr/api/users/10", true);
+					//console.log("https://wtg.aymerik-diebold.fr/api/users/" + superThis.getCookie("id"));
+					xhttp2.open("PATCH", "https://wtg.aymerik-diebold.fr/api/users/" + superThis.getCookie("id"), true);
 					xhttp2.setRequestHeader('Content-Type', 'application/merge-patch+json');
 					xhttp2.setRequestHeader('Authorization', 'Bearer ' + superThis.getCookie("token"));
 
 					listformat.push("/api/trips/" + superThis.props.param.id);
 					//console.log([...new Set(listformat)]);
 					xhttp2.send(JSON.stringify({
-						"recoredTrips": listformat // to onsure each trip is saved only one time
+						"recordedTrips": listformat // to onsure each trip is saved only one time
 					}));
 				}
 			}
 		};
-		xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/users/10", true);
+		xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/users/" + this.getCookie("id"), true);
 		xhttp.setRequestHeader('Content-Type', 'application/merge-patch+json');
 		xhttp.setRequestHeader('Authorization', 'Bearer ' + this.getCookie("token"));
 		xhttp.send();
@@ -261,13 +265,13 @@ export class EnteteVoyage extends Component {
 				<p class="ladescription">{'"' + this.state.param.description + '"'}</p>
 				<p>
 					{this.state.param.vegan
-						? "Ce voyage est vegan"
-						: "Ce voyage est signalé comme non-vegan"}
+						? "This trip is vegan"
+						: "This trip is non-vegan"}
 				</p>
 				<p>
 					{this.state.param.ecological
-						? "Ce voyage est ecologique"
-						: "Ce voyage est signalé comme non-ecologique"}
+						? "This trip is ecological"
+						: "This trip is marked as non-ecological"}
 				</p>
 				<p>
 					auteur :{" "}
@@ -366,7 +370,7 @@ class ShowVoyage extends Component {
 		xhttp.onreadystatechange = function () {
 			if (this.readyState === 4 && this.status === 200) {
 				const param = JSON.parse(this.responseText);
-				console.log("Voyage : "); console.log(param);
+				//console.log("Voyage : "); console.log(param);
 				parentVoyage.setState({
 					toRender: (
 						<div>
@@ -395,7 +399,8 @@ class ShowVoyage extends Component {
 								<EnteteVoyage param={param} connect={parentVoyage.props.connect} />
 
 								<div id="etapes">
-									{console.log(param)}
+									{//console.log(param)
+									}
 									{param.stages.map((etape) => (
 										<EtapeVoyage etape={etape} photos={etape.photos} />
 									))}
