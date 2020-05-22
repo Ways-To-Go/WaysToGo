@@ -132,13 +132,6 @@ export default class NavigationBar extends Component {
         ) : (
           <a href="/WaysToGo/">WaysToGo</a>
         )}
-        {this.props.active == 1 ? (
-          <a class="active" href={"?show=save"}>
-            Ajouter un voyage
-          </a>
-        ) : (
-          <a href={"?show=save"}>Ajouter un voyage</a>
-        )}
         {this.props.active == 2 ? (
           <a class="active" href="#contact">
             Contact
@@ -152,6 +145,13 @@ export default class NavigationBar extends Component {
           </a>
         ) : (
           <a href="#about">About</a>
+        )}
+        {this.props.connected ? (
+          <a class={this.props.active == 1 ? "active" : ""} href="?show=save">
+            Add a Trip
+          </a>
+        ) : (
+          <span></span>
         )}
         {this.props.connected ? (
           <a
