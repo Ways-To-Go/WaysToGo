@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import { Map, TileLayer, Marker, Popup } from "react-leaflet";
 import NavigationBar from "./NavigationBar";
+import Axios from "axios";
 
 // show the head of the trip
 /* Need a parameter param like :
@@ -18,264 +19,409 @@ import NavigationBar from "./NavigationBar";
  * }
  */
 export class EnteteVoyage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      param: props.param,
-    };
+	constructor(props) {
+		super(props);
+		this.state = {
+			param: props.param,
+		};
 
-    this.monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-  }
+		this.saveTripButton = React.createRef();
+		this.verifIfTripAlreadySaved = this.verifIfTripAlreadySaved.bind(this);
 
-  /* TODO :
-   * qui retourne le nombre de photos
-   * qui retourne le nombre de pays ou passe le voyage
-   */
+		this.monthNames = [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December",
+		];
 
-  getStageNumber(etapes) {
-    return etapes.length;
-  }
+	}
 
-  // retourne le mois de debut
-  getDateDebut(etapes) {
-    if (etapes.length > 0) {
-      var d = new Date(etapes[0].departure);
-      return this.monthNames[d.getMonth()];
-    } else return null;
-  }
+	/* TODO :
+	 * qui retourne le nombre de photos
+	 * qui retourne le nombre de pays ou passe le voyage
+	 */
 
-  // retourne le mois de fin
-  getDateFin(etapes) {
-    if (etapes.length > 0) {
-      var d = new Date(etapes[etapes.length - 1].arrival);
-      return this.monthNames[d.getMonth()];
-    } else return 0;
-  }
+	getStageNumber(etapes) {
+		return etapes.length;
+	}
 
-  // retourne le nombre de jours
-  getDureeVoyage1(etapes) {
-    if (etapes.length > 0) {
-      var d =
-        new Date(etapes[etapes.length - 1].arrival) -
-        new Date(etapes[0].departure);
-      const diffDays = Math.ceil(d / (1000 * 60 * 60 * 24)) + 1;
-      return diffDays;
-    } else return 0;
-  }
+	// retourne le mois de debut
+	getDateDebut(etapes) {
+		if (etapes.length > 0) {
+			var d = new Date(etapes[0].departure);
+			return this.monthNames[d.getMonth()];
+		} else return null;
+	}
 
-  getDureeVoyage2(date1, date2) {
-    var d = new Date(date2) - new Date(date1);
-    const diffDays = Math.ceil(d / (1000 * 60 * 60 * 24)) + 1;
-    return diffDays;
-  }
+	// retourne le mois de fin
+	getDateFin(etapes) {
+		if (etapes.length > 0) {
+			var d = new Date(etapes[etapes.length - 1].arrival);
+			return this.monthNames[d.getMonth()];
+		} else return 0;
+	}
 
-  // renvoi la date a afficher (mois - mois)
-  getMonthsDate1(etapes) {
-    if (etapes.length > 0) {
-      var d = this.getDateDebut(etapes);
-      var a = this.getDateFin(etapes);
-      if (d !== a)
-        return this.getDateDebut(etapes) + " - " + this.getDateFin(etapes);
-      else return d;
-    } else return "";
-  }
+	// retourne le nombre de jours
+	getDureeVoyage1(etapes) {
+		if (etapes.length > 0) {
+			var d =
+				new Date(etapes[etapes.length - 1].arrival) -
+				new Date(etapes[0].departure);
+			const diffDays = Math.ceil(d / (1000 * 60 * 60 * 24)) + 1;
+			return diffDays;
+		} else return 0;
+	}
 
-  getMonthsDate2(date1, date2) {
-    var d = new Date(date1);
-    var a = new Date(date2);
-    if (d.getMonth() !== a.getMonth())
-      return (
-        this.monthNames[d.getMonth()] + " - " + this.monthNames[a.getMonth()]
-      );
-    else return this.monthNames[d.getMonth()];
-  }
+	getDureeVoyage2(date1, date2) {
+		var d = new Date(date2) - new Date(date1);
+		const diffDays = Math.ceil(d / (1000 * 60 * 60 * 24)) + 1;
+		return diffDays;
+	}
 
-  render() {
-    return (
-      <div ref={this.state.param.refHead} id="head">
-        <h2>{this.state.param.title}</h2>
-        <h5>
-          {this.state.param.startdate
-            ? ""
-            : this.getMonthsDate1(this.state.param.stages)}
-        </h5>
-        <p class="ladescription">{'"' + this.state.param.description + '"'}</p>
-        <p>
-          {this.state.param.vegan
-            ? "Ce voyage est vegan"
-            : "Ce voyage est signalé comme non-vegan"}
+	// renvoi la date a afficher (mois - mois)
+	getMonthsDate1(etapes) {
+		if (etapes.length > 0) {
+			var d = this.getDateDebut(etapes);
+			var a = this.getDateFin(etapes);
+			if (d !== a)
+				return this.getDateDebut(etapes) + " - " + this.getDateFin(etapes);
+			else return d;
+		} else return "";
+	}
+
+	getMonthsDate2(date1, date2) {
+		var d = new Date(date1);
+		var a = new Date(date2);
+		if (d.getMonth() !== a.getMonth())
+			return (
+				this.monthNames[d.getMonth()] + " - " + this.monthNames[a.getMonth()]
+			);
+		else return this.monthNames[d.getMonth()];
+	}
+
+	// from StackOverflow
+	getCookie(cname) {
+		var name = cname + "=";
+		var decodedCookie = decodeURIComponent(document.cookie);
+		var ca = decodedCookie.split(';');
+		for (var i = 0; i < ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) == ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return "";
+	}
+
+	verifIfTripAlreadySaved() {
+		var xhttp = new XMLHttpRequest();
+		var superThis = this;
+		xhttp.onreadystatechange = function () {
+			console.log(this.responseText);
+			if (this.readyState === 4 && this.status === 200) {
+				superThis.saveTripButton.current.style.visibility = "visible";
+
+				var listformat = [];
+				JSON.parse(this.responseText).recoredTrips.forEach(function (item) {
+					listformat.push(item["@id"]);
+				});
+
+				if (listformat.indexOf("/api/trips/" + superThis.props.param.id) === -1) {
+					superThis.saveTripButton.current.innerHTML = "Save this trip";
+				}
+				else {
+					superThis.saveTripButton.current.innerHTML = "Trip already saved :) Click to cancel";
+				}
+
+			}
+			else if (this.readyState === 4 && this.status === 401) {
+				// renouvellement token automatiquement
+				const headers = {
+					"Content-Type": "application/json",
+				};
+				Axios.post(
+					"https://wtg.aymerik-diebold.fr/login_check",
+					{
+						username: "mailleon@gmail.com",
+						password: "monmdp111A!",
+					},
+					{ headers }
+				)
+					.then((res) => {
+						console.log(res);
+						superThis.props.connect(res.data.token);
+						superThis.verifIfTripAlreadySaved();
+					})
+					.catch((err) => {
+						throw err;
+					});
+			}
+		};
+		xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/users/10", true);
+		xhttp.setRequestHeader('Content-Type', 'application/json');
+		xhttp.setRequestHeader('Authorization', 'Bearer ' + this.getCookie("token"));
+		xhttp.send();
+	}
+
+	componentDidMount() {
+		this.verifIfTripAlreadySaved();
+	};
+
+	saveTrip() {
+		console.log(document.cookie);
+
+		// we first retrieve user already saved Trips
+		var xhttp = new XMLHttpRequest();
+		var superThis = this;
+		xhttp.onreadystatechange = function () {
+			//console.log(this.responseText);
+			if (this.readyState === 4 && this.status === 200) {
+				//console.log("SUCCESS");
+
+				var res = JSON.parse(this.responseText);
+				var listformat = [];
+				res.recoredTrips.forEach(function (item) {
+					listformat.push(item["@id"]);
+				});
+
+				// if trip is already saved, we delete it, else we saved it
+				var index = listformat.indexOf("/api/trips/" + superThis.props.param.id);
+				if (index !== -1) {
+					if (index > -1) {
+						listformat.splice(index, 1);
+					}
+
+
+					var xhttp2 = new XMLHttpRequest();
+					xhttp2.onreadystatechange = function () {
+						if (this.readyState === 4 && this.status === 200) {
+							superThis.saveTripButton.current.innerHTML = "Save this trip";
+						}
+					};
+					xhttp2.open("PATCH", "https://wtg.aymerik-diebold.fr/api/users/10", true);
+					xhttp2.setRequestHeader('Content-Type', 'application/merge-patch+json');
+					xhttp2.setRequestHeader('Authorization', 'Bearer ' + superThis.getCookie("token"));
+
+					//console.log([...new Set(listformat)]);
+					xhttp2.send(JSON.stringify({
+						"recoredTrips": listformat // to onsure each trip is saved only one time
+					}));
+
+
+
+
+				}
+				else {
+					// then we add the new trip to the olders
+					var xhttp2 = new XMLHttpRequest();
+					xhttp2.onreadystatechange = function () {
+						if (this.readyState === 4 && this.status === 200) {
+							superThis.saveTripButton.current.innerHTML = "Trip saved :) Click to cancel";
+						}
+					};
+					xhttp2.open("PATCH", "https://wtg.aymerik-diebold.fr/api/users/10", true);
+					xhttp2.setRequestHeader('Content-Type', 'application/merge-patch+json');
+					xhttp2.setRequestHeader('Authorization', 'Bearer ' + superThis.getCookie("token"));
+
+					listformat.push("/api/trips/" + superThis.props.param.id);
+					//console.log([...new Set(listformat)]);
+					xhttp2.send(JSON.stringify({
+						"recoredTrips": listformat // to onsure each trip is saved only one time
+					}));
+				}
+			}
+		};
+		xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/users/10", true);
+		xhttp.setRequestHeader('Content-Type', 'application/merge-patch+json');
+		xhttp.setRequestHeader('Authorization', 'Bearer ' + this.getCookie("token"));
+		xhttp.send();
+	}
+
+	render() {
+		return (
+			<div ref={this.state.param.refHead} id="head">
+				<h2>{this.state.param.title}</h2>
+				<h5>
+					{this.state.param.startdate
+						? ""
+						: this.getMonthsDate1(this.state.param.stages)}
+				</h5>
+				<p class="ladescription">{'"' + this.state.param.description + '"'}</p>
+				<p>
+					{this.state.param.vegan
+						? "Ce voyage est vegan"
+						: "Ce voyage est signalé comme non-vegan"}
+				</p>
+				<p>
+					{this.state.param.ecological
+						? "Ce voyage est ecologique"
+						: "Ce voyage est signalé comme non-ecologique"}
+				</p>
+				<p>
+					auteur :{" "}
+					{this.state.param.author.firstName +
+						" " +
+						this.state.param.author.lastName}
+				</p>
+				<p>
+					Durée du voyage :{" "}
+					{this.state.param.startdate
+						? this.getDureeVoyage2(
+							this.state.param.startdate,
+							this.state.param.enddate
+						)
+						: this.getDureeVoyage1(this.state.param.stages)}{" "}
+					jours
         </p>
-        <p>
-          {this.state.param.ecological
-            ? "Ce voyage est ecologique"
-            : "Ce voyage est signalé comme non-ecologique"}
-        </p>
-        <p>
-          auteur :{" "}
-          {this.state.param.author.firstName +
-            " " +
-            this.state.param.author.lastName}
-        </p>
-        <p>
-          Durée du voyage :{" "}
-          {this.state.param.startdate
-            ? this.getDureeVoyage2(
-                this.state.param.startdate,
-                this.state.param.enddate
-              )
-            : this.getDureeVoyage1(this.state.param.stages)}{" "}
-          jours
-        </p>
-        {this.state.param.edit ? (
-          <div>
-            <label for="files2" style={{ border: "2px solid black" }}>
-              Change cover image
+				{this.state.param.edit ? (
+					<div>
+						<label for="files2" style={{ border: "2px solid black" }}>
+							Change cover image
             </label>
-            <input
-              id="files2"
-              style={{ visibility: "hidden" }}
-              ref={this.state.param.refHead}
-              type="file"
-              accept="image/*"
-              onChange={this.state.param.changeCover}
-            />
-          </div>
-        ) : (
-          ""
-        )}
-      </div>
-    );
-  }
+						<input
+							id="files2"
+							style={{ visibility: "hidden" }}
+							ref={this.state.param.refHead}
+							type="file"
+							accept="image/*"
+							onChange={this.state.param.changeCover}
+						/>
+					</div>
+				) : (
+						<button ref={this.saveTripButton} style={{ visibility: "hidden" }} type="button" onClick={() => this.saveTrip()}>Save this trip</button>
+					)}
+			</div>
+		);
+	}
 }
 
 // render a step
 export class EtapeVoyage extends React.Component {
-  render() {
-    return (
-      <div>
-        <div class="etape">
-          <p class="nomEtape">{this.props.etape.description}</p>
+	render() {
+		return (
+			<div>
+				<div class="etape">
+					<p class="nomEtape">{this.props.etape.description}</p>
 
-          <p class="villedate_etape">
-            {this.props.etape.city + " • " + new Date(this.props.etape.arrival)}
-          </p>
+					<p class="villedate_etape">
+						{this.props.etape.city + " • " + new Date(this.props.etape.arrival)}
+					</p>
 
-          {this.props.etape.photos.map((photo, i) => (
-            <div>
-              <img
-                key={i}
-                src={photo.path}
-                alt={photo.title}
-                height="150"
-                width="200"
-              ></img>
+					{this.props.etape.photos.map((photo, i) => (
+						<div>
+							<img
+								key={i}
+								src={photo.path}
+								alt={photo.title}
+								height="150"
+								width="200"
+							></img>
 
-              <p key={i}>{photo.description}</p>
-            </div>
-          ))}
-        </div>
+							<p key={i}>{photo.description}</p>
+						</div>
+					))}
+				</div>
 
-        {this.props.etape.departureTransport ? (
-          <div class="transition_etape">
-            <p class="transitionTexte">
-              • Moyen de transport : {this.props.etape.departureTransport.type}
-            </p>
-          </div>
-        ) : (
-          ""
-        )}
-      </div>
-    );
-  }
+				{this.props.etape.departureTransport ? (
+					<div class="transition_etape">
+						<p class="transitionTexte">
+							• Moyen de transport : {this.props.etape.departureTransport.type}
+						</p>
+					</div>
+				) : (
+						""
+					)}
+			</div>
+		);
+	}
 }
 
 class ShowVoyage extends Component {
-  constructor(props) {
-    super(props);
+	constructor(props) {
+		super(props);
 
-    this.loadDoc(this); // on recupere le voyage souhaite avec une requete ajax
+		this.loadDoc(this); // on recupere le voyage souhaite avec une requete ajax
 
-    this.state = {
-      id: props.id,
-      titre: null,
-      toRender: <h1>Chargement en cours...</h1>,
-    };
-  }
+		this.state = {
+			id: props.id,
+			titre: null,
+			toRender: <h1>Chargement en cours...</h1>,
+		};
+	}
 
-  loadDoc(parentVoyage) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-      if (this.readyState === 4 && this.status === 200) {
-        const param = JSON.parse(this.responseText);
-        console.log("Voyage : " + param);
-        parentVoyage.setState({
-          toRender: (
-            <div>
-              <NavigationBar
-                connected={parentVoyage.props.connected}
-                connect={parentVoyage.props.connect}
-              />
-              <div id="carteSide">
-                <Map id="ShowVoyageMap" center={[40.0, 3.0]} zoom={1}>
-                  <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
+	loadDoc(parentVoyage) {
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function () {
+			if (this.readyState === 4 && this.status === 200) {
+				const param = JSON.parse(this.responseText);
+				console.log("Voyage : "); console.log(param);
+				parentVoyage.setState({
+					toRender: (
+						<div>
+							<NavigationBar
+								connected={parentVoyage.props.connected}
+								connect={parentVoyage.props.connect}
+							/>
+							<div id="carteSide">
+								<Map id="ShowVoyageMap" center={[40.0, 3.0]} zoom={1}>
+									<TileLayer
+										attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+										url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+									/>
 
-                  {param.stages.map((etape) => (
-                    <Marker position={[etape.lng, etape.lat]}>
-                      <Popup>
-                        <h1>{etape.description}</h1>
-                      </Popup>
-                    </Marker>
-                  ))}
-                </Map>
-              </div>
+									{param.stages.map((etape) => (
+										<Marker position={[etape.lng, etape.lat]}>
+											<Popup>
+												<h1>{etape.description}</h1>
+											</Popup>
+										</Marker>
+									))}
+								</Map>
+							</div>
 
-              <div id="information">
-                <EnteteVoyage param={param} />
+							<div id="information">
+								<EnteteVoyage param={param} connect={parentVoyage.props.connect} />
 
-                <div id="etapes">
-                  {console.log(param)}
-                  {param.stages.map((etape) => (
-                    <EtapeVoyage etape={etape} photos={etape.photos} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          ),
-        });
-      }
-    };
-    xhttp.open(
-      "GET",
-      "https://wtg.aymerik-diebold.fr/api/trips/" + parentVoyage.props.id,
-      true
-    );
-    xhttp.send();
-  }
+								<div id="etapes">
+									{console.log(param)}
+									{param.stages.map((etape) => (
+										<EtapeVoyage etape={etape} photos={etape.photos} />
+									))}
+								</div>
+							</div>
+						</div>
+					),
+				});
+			}
+		};
+		xhttp.open(
+			"GET",
+			"https://wtg.aymerik-diebold.fr/api/trips/" + parentVoyage.props.id,
+			true
+		);
+		xhttp.send();
+	}
 
-  render() {
-    let content = (
-      <div>
-        <div>{this.state.toRender}</div>
-      </div>
-    );
-    return content;
-  }
+	render() {
+		let content = (
+			<div>
+				<div>{this.state.toRender}</div>
+			</div>
+		);
+		return content;
+	}
 }
 
 export default ShowVoyage;
