@@ -70,7 +70,11 @@ export default class App extends Component {
       );
     } else if (this.state.pageActuelle === "profile") {
       return (
-        <Profile connected={this.state.connected} token={this.state.token} />
+        <Profile
+          connected={this.state.connected}
+          token={this.state.token}
+          connect={this.connect}
+        />
       );
     } else if (this.state.pageActuelle === "research") {
       return <SearchResult />;
