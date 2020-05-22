@@ -185,6 +185,11 @@ export default class NavigationBar extends Component {
             </a>
           </div>
         )}
+        {this.props.connected ? (
+          <a href="?logout=true">Logout</a>
+        ) : (
+          <span></span>
+        )}
         {this.props.active == 5 ? (
           <a class="active" href={"?show=research"}>
             {" "}
