@@ -9,7 +9,7 @@ export class Profile extends Component {
     lastname: "",
     id: "",
     trips: [],
-    recoredTrips: [],
+    recordedTrips: [],
   };
 
   getUserInfo = () => {
@@ -25,7 +25,7 @@ export class Profile extends Component {
           lastname: res.data.lastName,
           id: res.data.id,
           trips: res.data.trips,
-          recoredTrips: res.data.recoredTrips,
+          recordedTrips: res.data.recordedTrips,
         });
       })
       .catch((err) => {
@@ -98,10 +98,10 @@ export class Profile extends Component {
                   Add trip!
                 </a>
               </div>
-              <div className="recored-trips">
+              <div className="recorded-trips">
                 <h3 style={{ backgroundColor: "inherit" }}>Favorite trips</h3>
-                {this.state.recoredTrips.length !== 0 ? (
-                  this.state.recoredTrips.map((trip) => (
+                {this.state.recordedTrips.length !== 0 ? (
+                  this.state.recordedTrips.map((trip) => (
                     <p>
                       <a href={"?show=trip&id=" + trip.id}>{trip.title}</a>
                     </p>
