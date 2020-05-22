@@ -602,6 +602,7 @@ export default class AddVoyage extends Component {
 				})
 			} else if (this.readyState === 4 && this.status === 401) {
 				console.log("Token non valide, renouvellement...");
+				console.log(parentVoyage.state.token)
 				parentVoyage.renouvelerToken();
 			}
 		};
@@ -614,7 +615,7 @@ export default class AddVoyage extends Component {
 			"description": newdescription,
 			"vegan": newvegan,
 			"ecological": newecolo,
-			"author": "api/users/10",
+			"author": "api/users/" + parentVoyage.props.connected,
 			"keywords": "paris plage",
 		}));
 
