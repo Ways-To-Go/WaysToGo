@@ -9,7 +9,7 @@ export class Profile extends Component {
     lastname: "",
     id: "",
     trips: [],
-    tripTitles: [],
+    recoredTrips: [],
   };
 
   getUserInfo = () => {
@@ -25,8 +25,8 @@ export class Profile extends Component {
           lastname: res.data.lastName,
           id: res.data.id,
           trips: res.data.trips,
+          recoredTrips: res.data.recoredTrips,
         });
-        this.getTrips();
       })
       .catch((err) => {
         console.log("Not connected");
@@ -68,26 +68,48 @@ export class Profile extends Component {
         <NavigationBar active="4" connected={this.props.connected} />
         <div className="profileContainer" style={containerStyle}>
           <h1>My Profile</h1>
-          <h3>Personal Info</h3>
-          <div class="profileBox" style={boxStyle}>
+          <h3 style={{ backgroundColor: "inherit" }}>Personal Info</h3>
+          <div className="profileBox" style={boxStyle}>
             <div>
-              <p class="left-profile">Email</p>
-              <p class="left-profile">Firstname</p>
-              <p class="left-profile">Lastname</p>
+              <p>Email</p>
+              <p>Firstname</p>
+              <p>Lastname</p>
             </div>
             <div>
-              <p class="right-profile">{this.state.email}</p>
-              <p class="right-profile">{this.state.firstname}</p>
-              <p class="right-profile">{this.state.lastname}</p>
+              <p>{this.state.email}</p>
+              <p>{this.state.firstname}</p>
+              <p>{this.state.lastname}</p>
             </div>
           </div>
-          <div class="my-trips">
-            <h3>My trips</h3>
-            {this.state.tripTitles.map((trip) => (
-              <p>
-                <a href={"?show=trip&id=" + trip.id}>{trip.title}</a>
-              </p>
-            ))}
+          <div style={trips}>
+            <div className="my-trips">
+              <h3 style={{ backgroundColor: "inherit" }}>My trips</h3>
+              {this.state.trips.map((trip) => (
+                <p>
+                  <a href={"?show=trip&id=" + trip.id}>{trip.title}</a>
+                </p>
+              ))}
+              <a href="?show=save" style={{ color: "red" }}>
+                Add trip!
+              </a>
+            </div>
+            <div className="recored-trips">
+              <h3 style={{ backgroundColor: "inherit" }}>Favorite trips</h3>
+              {this.state.recoredTrips.length !== 0 ? (
+                this.state.recoredTrips.map((trip) => (
+                  <p>
+                    <a href={"?show=trip&id=" + trip.id}>{trip.title}</a>
+                  </p>
+                ))
+              ) : (
+                <p>
+                  You don't have any favorite trip :(
+                  <a href="/WaysToGo" style={{ display: "block" }}>
+                    Browse trips to save your favorite!
+                  </a>
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -97,12 +119,17 @@ export class Profile extends Component {
 
 const containerStyle = {
   textAlign: "center",
-  border: "solid purple 3px",
+  backgroundColor: "#f3f3f3",
   width: "50%",
   margin: "auto",
 };
 
 const boxStyle = {
+  display: "flex",
+  justifyContent: "space-around",
+};
+
+const trips = {
   display: "flex",
   justifyContent: "space-around",
 };
