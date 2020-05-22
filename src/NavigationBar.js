@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import Axios from "axios";
+import Cookies from "universal-cookie";
 
 export default class NavigationBar extends Component {
   state = {
@@ -46,6 +47,19 @@ export default class NavigationBar extends Component {
         console.log(res);
         this.props.connect(res.data.token);
         this.setState({ showLogin: false });
+
+        Axios.get("https://wtg.aymerik-diebold.fr/api/me", {
+          headers: { Authorization: "Bearer " + res.data.token },
+        })
+          .then((res) => {
+            console.log(res);
+            const cookies = new Cookies();
+            cookies.set("id", res.data.id, { path: "/" });
+          })
+          .catch((err) => {
+            console.log("Error when retrieve user id");
+            throw err;
+          });
       })
       .catch((err) => {
         console.log("Login failed");
@@ -140,11 +154,11 @@ export default class NavigationBar extends Component {
           <a href="#contact">Contact</a>
         )}
         {this.props.active == 3 ? (
-          <a class="active" href="#about">
+          <a class="active" href="?show=about">
             About
           </a>
         ) : (
-          <a href="#about">About</a>
+          <a href="?show=about">About</a>
         )}
         {this.props.connected ? (
           <a class={this.props.active == 1 ? "active" : ""} href="?show=save">
