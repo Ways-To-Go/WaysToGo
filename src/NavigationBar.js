@@ -57,6 +57,8 @@ export default class NavigationBar extends Component {
 						console.log(res);
 						const cookies = new Cookies();
 						cookies.set("id", res.data.id, { path: "/" });
+						cookies.set("tripsIds", JSON.stringify(res.data.trips), { path: "/" });
+						console.log(document.cookie);
 					})
 					.catch((err) => {
 						console.log("Error when retrieve user id");
