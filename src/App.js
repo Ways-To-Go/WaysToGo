@@ -14,18 +14,20 @@ export default class App extends Component {
     super(props);
 
     const cookies = new Cookies();
-    const token = cookies.get("token") ? cookies.get("token") : false;
-
     const urlParams = new URLSearchParams(window.location.search);
+    let token = cookies.get("token") ? cookies.get("token") : false;
+
+    if (urlParams.get("logout")) {
+      this.disconnect();
+      token = false;
+    }
+
     this.state = {
       pageActuelle: urlParams.get("show"), // on recupere la page a afficher via les arguments de l'URL
       trip: urlParams.get("id"),
       connected: token ? true : false,
       token: token ? token : "",
     };
-    if (urlParams.get("logout")) {
-      this.disconnect();
-    }
   }
 
   componentDidMount() {
