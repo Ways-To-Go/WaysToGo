@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "e055707867d34054eebe77c7ab613f3d",
+    "revision": "a7cbebc6545289ba916606ef2a8ee98e",
     "url": "/WaysToGo/index.html"
   },
   {
-    "revision": "6338361b71791bb32db8",
+    "revision": "90ecee468521f32e2f89",
     "url": "/WaysToGo/static/css/main.ef64f04a.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/WaysToGo/static/js/2.9ab26f68.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "6338361b71791bb32db8",
-    "url": "/WaysToGo/static/js/main.13feee77.chunk.js"
+    "revision": "90ecee468521f32e2f89",
+    "url": "/WaysToGo/static/js/main.ff6b5f30.chunk.js"
   },
   {
     "revision": "f200946a1c0a8cd0965b",
