@@ -70,7 +70,7 @@ export default class ShowCarte extends Component {
               <Marker position={[etape.lng, etape.lat]}>
                 <Popup>
                   <h1>{voyage.title}</h1>
-                  <a href={"?show=trip&id=" + voyage.id}>Cliquez</a>
+                  <a href={"?show=trip&id=" + voyage.id}>Click here to discover</a>
                 </Popup>
               </Marker>
             ))

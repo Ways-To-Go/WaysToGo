@@ -126,30 +126,32 @@ export class EnteteVoyage extends Component {
 	}
 
 	verifIfTripAlreadySaved() {
-		var xhttp = new XMLHttpRequest();
-		var superThis = this;
-		xhttp.onreadystatechange = function () {
-			console.log(this.responseText);
-			if (this.readyState === 4 && this.status === 200) {
-				superThis.saveTripButton.current.style.visibility = "visible";
+		// if I'm connected : show the button save/de-save.
+		if (this.props.connected) {
+			var xhttp = new XMLHttpRequest();
+			var superThis = this;
+			xhttp.onreadystatechange = function () {
+				console.log(this.responseText);
+				if (this.readyState === 4 && this.status === 200) {
+					superThis.saveTripButton.current.style.visibility = "visible";
 
-				var listformat = [];
-				//console.log(JSON.parse(this.responseText));
-				JSON.parse(this.responseText).recordedTrips.forEach(function (item) {
-					listformat.push(item["@id"]);
-				});
+					var listformat = [];
+					//console.log(JSON.parse(this.responseText));
+					JSON.parse(this.responseText).recordedTrips.forEach(function (item) {
+						listformat.push(item["@id"]);
+					});
 
-				if (listformat.indexOf("/api/trips/" + superThis.props.param.id) === -1) {
-					superThis.saveTripButton.current.innerHTML = "Save this trip";
+					if (listformat.indexOf("/api/trips/" + superThis.props.param.id) === -1) {
+						superThis.saveTripButton.current.innerHTML = "Save this trip";
+					}
+					else {
+						superThis.saveTripButton.current.innerHTML = "Trip already saved :) Click to cancel";
+					}
+
 				}
-				else {
-					superThis.saveTripButton.current.innerHTML = "Trip already saved :) Click to cancel";
-				}
-
-			}
-			else if (this.readyState === 4 && this.status === 401) {
+				//else if (this.readyState === 4 && this.status === 401) {
 				// renouvellement token automatiquement
-				const headers = {
+				/*const headers = {
 					"Content-Type": "application/json",
 				};
 				Axios.post(
@@ -167,13 +169,15 @@ export class EnteteVoyage extends Component {
 					})
 					.catch((err) => {
 						throw err;
-					});
-			}
-		};
-		xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/users/" + superThis.getCookie("id"), true);
-		xhttp.setRequestHeader('Content-Type', 'application/json');
-		xhttp.setRequestHeader('Authorization', 'Bearer ' + superThis.getCookie("token"));
-		xhttp.send();
+					});*/
+				//alert("Connection time out. Please reconnect");
+				//}
+			};
+			xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/users/" + superThis.getCookie("id"), true);
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('Authorization', 'Bearer ' + superThis.getCookie("token"));
+			xhttp.send();
+		}
 	}
 
 	componentDidMount() {
@@ -357,12 +361,64 @@ class ShowVoyage extends Component {
 		super(props);
 
 		this.loadDoc(this); // on recupere le voyage souhaite avec une requete ajax
+		this.verifTripIsMine(this);
 
 		this.state = {
 			id: props.id,
 			titre: null,
 			toRender: <h1>Chargement en cours...</h1>,
 		};
+	}
+
+	insertParam(key, value) {
+		key = encodeURI(key); value = encodeURI(value);
+
+		var kvp = document.location.search.substr(1).split('&');
+
+		var i = kvp.length; var x; while (i--) {
+			x = kvp[i].split('=');
+
+			if (x[0] == key) {
+				x[1] = value;
+				kvp[i] = x.join('=');
+				break;
+			}
+		}
+
+		if (i < 0) { kvp[kvp.length] = [key, value].join('='); }
+
+		//this will reload the page, it's likely better to store this until finished
+		document.location.search = kvp.join('&');
+	}
+
+	verifTripIsMine() {
+		Axios.get("https://wtg.aymerik-diebold.fr/api/me", {
+			headers: { Authorization: "Bearer " + this.props.token },
+		}).then((res) => {
+				console.log(res);
+
+
+			//var res2 = res.data.trips;
+			//console.log(res2);
+				var listformat = [];
+			res.data.trips.forEach(function (item) {
+				listformat.push(parseInt(item.id));
+				});
+			
+			
+			var index = listformat.indexOf(parseInt(this.props.id));
+				console.log(index);
+				if (index == -1) {
+					console.log("not found");
+				} else {
+					console.log("found");
+				}
+
+			})
+			.catch((err) => {
+				console.log("Error when retrieve user id");
+				throw err;
+			});
 	}
 
 	loadDoc(parentVoyage) {
@@ -396,7 +452,7 @@ class ShowVoyage extends Component {
 							</div>
 
 							<div id="information">
-								<EnteteVoyage param={param} connect={parentVoyage.props.connect} />
+								<EnteteVoyage param={param} connect={parentVoyage.props.connect} connected={parentVoyage.props.connected} />
 
 								<div id="etapes">
 									{//console.log(param)

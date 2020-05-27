@@ -96,7 +96,11 @@ class Upload extends React.Component {
 						<img width="200px" height="200px" src={URL.createObjectURL(file)} alt="Image" />
 					))}
 				</div>
-				<input ref={this.props.refInput} type="file" accept="image/*" multiple onChange={this.handleChange} />
+				<input id="file-upload" ref={this.props.refInput} type="file" accept="image/*" multiple onChange={this.handleChange} />
+				<label for="file-upload" class="custom-file-upload">
+					Add images to this step
+				</label>
+
 			</div>
 		);
 	}
@@ -246,6 +250,7 @@ class CreationVoyageAjoutEtapes extends React.Component {
 			ecolo: props.ecolo,
 			voyageId: props.voyageId,
 			editStepBool: false,
+			//trips: props.trips,
 
 			files: []
 		};
@@ -287,11 +292,11 @@ class CreationVoyageAjoutEtapes extends React.Component {
 
 		this.setState({
 			editStepBool: true,
-			refLocation: refLocation,
+			//refLocation: refLocation,
 			stepDate: refDate,
 			stepDateDepart: refDateDepart,
 			stepDepartureTransport: refDepartureTransport,
-			refDescription: refDescription,
+			//refDescription: refDescription,
 			refName: refName,
 		})
 
@@ -301,91 +306,96 @@ class CreationVoyageAjoutEtapes extends React.Component {
 	}
 
 	addEtapeVoyage() {
-		var xhttp = new XMLHttpRequest();
-		var parentVoyage = this;
-		xhttp.onreadystatechange = function () {
-			//console.log(this.responseText);
-			var res = this.responseText;
-			if (this.readyState === 4 && this.status === 201) {
-				if (parentVoyage.state.editStepBool == false) {
-					ReactDOM.render(<UneEtape arguments={
-						{
-							"location": parentVoyage.newCity.current.value,
-							"files": parentVoyage.state.files,
-							"description": parentVoyage.newDescription.current.value,
-							"date": parentVoyage.newDate.current.value,
-							"dateDepart": parentVoyage.newDateDepart.current.value,
-							"departureTransport": parentVoyage.newDepartureTransport.current.value,
-							"name": parentVoyage.newName.current.value
-						}} editStepLink={parentVoyage.editStep} />, parentVoyage.setTextInputRef.current.appendChild(document.createElement('div')))
-				} else {
-					parentVoyage.state.refLocation.current.textContent = parentVoyage.newCity.current.value;
-					parentVoyage.state.refDate.current.textContent = parentVoyage.newDate.current.value;
-					parentVoyage.state.refDateDepart.current.textContent = parentVoyage.newDateDepart.current.value;
-					parentVoyage.state.refDepartureTransport.current.textContent = parentVoyage.newDepartureTransport.current.value;
-					parentVoyage.state.refDescription.current.textContent = parentVoyage.newDescription.current.value;
-					parentVoyage.state.refName.current.textContent = parentVoyage.newName.current.value;
-				}
-
-				// maintenant on envoi le transport
-				var xhttp = new XMLHttpRequest();
-				xhttp.onreadystatechange = function () {
-					//console.log(this.responseText);
-					if (this.readyState === 4 && this.status === 201) {
-						//console.log("Upload transport etape success");
-						parentVoyage.state.editStepBool = false;
-						parentVoyage.toggleModal();
+		if (this.newName.current.value != "" && this.newDate.current.value != ""
+			&& this.newDateDepart.current.value != "" && this.newCity.current.value != "") {
+			var xhttp = new XMLHttpRequest();
+			var parentVoyage = this;
+			xhttp.onreadystatechange = function () {
+				//console.log(this.responseText);
+				var res = this.responseText;
+				if (this.readyState === 4 && this.status === 201) {
+					if (parentVoyage.state.editStepBool == false) {
+						ReactDOM.render(<UneEtape arguments={
+							{
+								"location": parentVoyage.newCity.current.value,
+								"files": parentVoyage.state.files,
+								"description": parentVoyage.newDescription.current.value,
+								"date": parentVoyage.newDate.current.value,
+								"dateDepart": parentVoyage.newDateDepart.current.value,
+								"departureTransport": parentVoyage.newDepartureTransport.current.value,
+								"name": parentVoyage.newName.current.value
+							}} editStepLink={parentVoyage.editStep} />, parentVoyage.setTextInputRef.current.appendChild(document.createElement('div')))
+					} else {
+						parentVoyage.state.refLocation.current.textContent = parentVoyage.newCity.current.value;
+						parentVoyage.state.refDate.current.textContent = parentVoyage.newDate.current.value;
+						parentVoyage.state.refDateDepart.current.textContent = parentVoyage.newDateDepart.current.value;
+						parentVoyage.state.refDepartureTransport.current.textContent = parentVoyage.newDepartureTransport.current.value;
+						parentVoyage.state.refDescription.current.textContent = parentVoyage.newDescription.current.value;
+						parentVoyage.state.refName.current.textContent = parentVoyage.newName.current.value;
 					}
-				};
-				xhttp.open("POST", "https://wtg.aymerik-diebold.fr/api/transports", true);
-				xhttp.setRequestHeader('Authorization', 'Bearer ' + parentVoyage.props.token);
-				xhttp.setRequestHeader('Content-Type', 'application/json');
-				xhttp.send(JSON.stringify({
-					stageFrom: "/api/stages/" + JSON.parse(res).id,
-					type: parentVoyage.newDepartureTransport.current.value,
-					distance: 0
-				}));
 
-			}
-		};
+					// maintenant on envoi le transport
+					var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function () {
+						//console.log(this.responseText);
+						if (this.readyState === 4 && this.status === 201) {
+							//console.log("Upload transport etape success");
+							parentVoyage.state.editStepBool = false;
+							parentVoyage.toggleModal();
+						}
+					};
+					xhttp.open("POST", "https://wtg.aymerik-diebold.fr/api/transports", true);
+					xhttp.setRequestHeader('Authorization', 'Bearer ' + parentVoyage.props.token);
+					xhttp.setRequestHeader('Content-Type', 'application/json');
+					xhttp.send(JSON.stringify({
+						stageFrom: "/api/stages/" + JSON.parse(res).id,
+						type: parentVoyage.newDepartureTransport.current.value,
+						distance: 0
+					}));
 
-		this.setState({
-			stepDescription: this.newDescription.current.value,
-			stepName: this.newName.current.value,
-			stepDate: this.newDate.current.value,
-			stepDateDepart: this.newDateDepart.current.value,
-			stepDepartureTransport: this.newDepartureTransport.current.value,
-			stepId: this.state.voyageId,
-			stepLat: this.state.newLat,
-			stepLnt: this.state.newLnt,
-			stepCity: this.newCity.current.value,
-			stepFiles: this.state.files
-		})
+				}
+			};
 
-		var listformat = [];
-		//console.log(this.state.files);
-		this.state.files.forEach(function (item) {
-			listformat.push("/api/photos/" + item.idAPI);
-		});
-		//console.log(listformat);
+			this.setState({
+				stepDescription: this.newDescription.current.value,
+				stepName: this.newName.current.value,
+				stepDate: this.newDate.current.value,
+				stepDateDepart: this.newDateDepart.current.value,
+				stepDepartureTransport: this.newDepartureTransport.current.value,
+				stepId: this.state.voyageId,
+				stepLat: this.state.newLat,
+				stepLnt: this.state.newLnt,
+				stepCity: this.newCity.current.value,
+				stepFiles: this.state.files
+			})
 
-		xhttp.open("POST", "https://wtg.aymerik-diebold.fr/api/stages", true);
-		xhttp.setRequestHeader('Authorization', 'Bearer ' + this.props.token);
-		xhttp.setRequestHeader('Content-Type', 'application/json');
-		xhttp.send(JSON.stringify({
-			city: this.newCity.current.value,
-			country: "rien",
-			mark: 0,
-			description: this.newDescription.current.value,
-			arrival: this.newDate.current.value,
-			departure: this.newDateDepart.current.value,
-			//departureTransport: this.newDepartureTransport.current.value,
-			trip: "/api/trips/" + this.state.voyageId,
-			lng: this.state.newLat,
-			lat: this.state.newLnt,
-			title: this.newName.current.value,
-			photos: listformat
-		}));
+			var listformat = [];
+			//console.log(this.state.files);
+			this.state.files.forEach(function (item) {
+				listformat.push("/api/photos/" + item.idAPI);
+			});
+			//console.log(listformat);
+
+			xhttp.open("POST", "https://wtg.aymerik-diebold.fr/api/stages", true);
+			xhttp.setRequestHeader('Authorization', 'Bearer ' + this.props.token);
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.send(JSON.stringify({
+				city: this.newCity.current.value,
+				country: "rien",
+				mark: 0,
+				description: this.newDescription.current.value,
+				arrival: this.newDate.current.value,
+				departure: this.newDateDepart.current.value,
+				//departureTransport: this.newDepartureTransport.current.value,
+				trip: "/api/trips/" + this.state.voyageId,
+				lng: this.state.newLat,
+				lat: this.state.newLnt,
+				title: this.newName.current.value,
+				photos: listformat
+			}));
+		} else {
+			alert("Location, name, arrival and departure date required");
+		}
 	}
 
 	toggleModal() {
@@ -423,6 +433,7 @@ class CreationVoyageAjoutEtapes extends React.Component {
 	}
 
 	changeEnteteBackground(event) {
+		// linear black gradient to blacker the img
 		this.refHead.current.style.backgroundImage = "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('" + URL.createObjectURL(event.target.files[0]) + "')";
 	}
 
@@ -447,19 +458,19 @@ class CreationVoyageAjoutEtapes extends React.Component {
 						<ResearchBarCity refCity={this.newCity} getdataback={this.getLatLnt} newLat={this.newLat} newLnt={this.newLnt} />
 
 						<label for="nometape">Step name</label>
-						<input ref={this.newName} type="text" id="nometape" name="nometape" placeholder="ex. Promenade dans Paris"></input>
+						<input ref={this.newName} type="text" id="nometape" name="nometape" placeholder="ex. visit of the Eiffel tower"></input>
 
 						<label for="larrivee">Arrival date</label>
-						<input ref={this.newDate} type="text" id="larrivee" name="larrivee" placeholder="Arrivée.."></input>
+						<input ref={this.newDate} type="text" id="larrivee" name="larrivee" placeholder="Arrival.. (YYYY-MM-DD)"></input>
 
 						<label for="ldepart">Departure date</label>
-						<input ref={this.newDateDepart} type="text" id="ldepart" name="ldepart" placeholder="Arrivée.."></input>
+						<input ref={this.newDateDepart} type="text" id="ldepart" name="ldepart" placeholder="Departure.. (YYYY-MM-DD)"></input>
 
 						<label for="ltransport">Moyen de transport entre étapes</label>
-						<input ref={this.newDepartureTransport} type="text" id="ltransport" name="ltransport" placeholder="Moyen transport.."></input>
+						<input ref={this.newDepartureTransport} type="text" id="ltransport" name="ltransport" placeholder="Train, car, tuk-tuk, on foot .."></input>
 
 						<label for="ldescription">Your story</label>
-						<textarea ref={this.newDescription} id="ldescription" name="ldescription" placeholder="Ce que vous voulez..."></textarea>
+						<textarea ref={this.newDescription} id="ldescription" name="ldescription" placeholder="What you want.."></textarea>
 
 						<Upload token={this.props.token} addImgFile={this.addImgFile.bind(this)} files={this.state.files} changeButtonState={this.changeButtonState.bind(this)} imgcontainer={this.imgcontainer} refInput={this.inputphotoToReset} />
 
@@ -558,11 +569,11 @@ export default class AddVoyage extends Component {
 			ecolo: false
 		};
 
-		this.renouvelerToken = this.renouvelerToken.bind(this);
+		//this.renouvelerToken = this.renouvelerToken.bind(this);
 		this.addMyVoyage = this.addMyVoyage.bind(this)
 	}
 
-	renouvelerToken() {
+	/*renouvelerToken() {
 		var xhttp = new XMLHttpRequest();
 		var parentToken = this;
 		xhttp.onreadystatechange = function () {
@@ -578,7 +589,7 @@ export default class AddVoyage extends Component {
 			"username": "mailleon@gmail.com",
 			"password": "monmdp111A!"
 		}));
-	}
+	}*/
 
 	addMyVoyage(newname, newdescription, newvegan, newecolo) {
 		//console.log(newname, newdescription, newvegan, newecolo);
@@ -601,9 +612,9 @@ export default class AddVoyage extends Component {
 					voyageId: res.id
 				})
 			} else if (this.readyState === 4 && this.status === 401) {
-				console.log("Token non valide, renouvellement...");
-				console.log(parentVoyage.state.token)
-				parentVoyage.renouvelerToken();
+				alert("Connection time out. Please reconnect");
+				//console.log(parentVoyage.state.token)
+				//parentVoyage.renouvelerToken();
 			}
 		};
 

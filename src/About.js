@@ -17,6 +17,7 @@ export default class About extends Component {
 				<h3>Explore. Share. Discover.</h3>
 				<p>WaysToGo allows you to share your trips to everyone. <br></br>Search new trips, begin new adventures :)</p>
 				<p>Founded by Caroline Texier and Arnaud Stoffel</p>
+				<p>Developed by Aymerik Diebold, Jiacheng Zhou, Léon Davidovski, Youssef El Saadany with &#x2665;</p>
 			</div>
 		);
 	}

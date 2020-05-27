@@ -54,7 +54,7 @@ export default class NavigationBar extends Component {
           .then((res) => {
             console.log(res);
             const cookies = new Cookies();
-            cookies.set("id", res.data.id, { path: "/" });
+			  cookies.set("id", res.data.id, { path: "/" });
           })
           .catch((err) => {
             console.log("Error when retrieve user id");
@@ -147,13 +147,13 @@ export default class NavigationBar extends Component {
         ) : (
           <a href="/WaysToGo/">WaysToGo</a>
         )}
-        {this.props.active == 2 ? (
+        {/*this.props.active == 2 ? (
           <a class="active" href="#contact">
             Contact
           </a>
         ) : (
           <a href="#contact">Contact</a>
-        )}
+        )*/}
         {this.props.active == 3 ? (
           <a class="active" href="?show=about">
             About
