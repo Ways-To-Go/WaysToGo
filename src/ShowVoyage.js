@@ -3,6 +3,8 @@ import "./App.css";
 import { Map, TileLayer, Marker, Popup } from "react-leaflet";
 import NavigationBar from "./NavigationBar";
 import Axios from "axios";
+import EditStep from "./editStep.js";
+import AddStep from "./addStep.js";
 
 // show the head of the trip
 /* Need a parameter param like :
@@ -318,6 +320,8 @@ export class EnteteVoyage extends Component {
 // render a step
 export class EtapeVoyage extends React.Component {
 	render() {
+		console.log(this.props.editStepKey);
+		console.log(this.props.etape);
 		return (
 			<div>
 				<div class="etape">
@@ -330,7 +334,7 @@ export class EtapeVoyage extends React.Component {
 					{this.props.etape.photos.map((photo, i) => (
 						<div>
 							<img
-								key={i}
+								key={this.props.editStepKey.toString() + i.toString()}
 								src={photo.path}
 								alt={photo.title}
 								height="150"
@@ -340,6 +344,14 @@ export class EtapeVoyage extends React.Component {
 							<p key={i}>{photo.description}</p>
 						</div>
 					))}
+					{console.log("test here")}
+					{console.log(this.props.etape)}
+					{this.props.myTrip ? 
+						<EditStep key={this.props.editStepKey} stepKey={this.props.editStepKey} step={this.props.etape} token={this.props.token} />
+						//console.log("here")
+						:
+						console.log("not here")
+					}
 				</div>
 
 				{this.props.etape.departureTransport ? (
@@ -351,6 +363,13 @@ export class EtapeVoyage extends React.Component {
 				) : (
 						""
 					)}
+				{console.log(this.props.etape)}
+				{/*this.props.myTrip ?
+					<AddStep tripId={this.props.tripId} key={this.props.editStepKey} stepKey={this.props.editStepKey} token={this.props.token} />
+					//console.log("here")
+					:
+					console.log("not here")
+				*/}
 			</div>
 		);
 	}
@@ -364,38 +383,16 @@ class ShowVoyage extends Component {
 		this.verifTripIsMine(this);
 
 		this.state = {
-			id: props.id,
-			titre: null,
-			toRender: <h1>Chargement en cours...</h1>,
+			param:false,
+			myTrip:false
 		};
-	}
-
-	insertParam(key, value) {
-		key = encodeURI(key); value = encodeURI(value);
-
-		var kvp = document.location.search.substr(1).split('&');
-
-		var i = kvp.length; var x; while (i--) {
-			x = kvp[i].split('=');
-
-			if (x[0] == key) {
-				x[1] = value;
-				kvp[i] = x.join('=');
-				break;
-			}
-		}
-
-		if (i < 0) { kvp[kvp.length] = [key, value].join('='); }
-
-		//this will reload the page, it's likely better to store this until finished
-		document.location.search = kvp.join('&');
 	}
 
 	verifTripIsMine() {
 		Axios.get("https://wtg.aymerik-diebold.fr/api/me", {
 			headers: { Authorization: "Bearer " + this.props.token },
 		}).then((res) => {
-				console.log(res);
+			console.log(res);
 
 
 			//var res2 = res.data.trips;
@@ -412,6 +409,7 @@ class ShowVoyage extends Component {
 					console.log("not found");
 				} else {
 					console.log("found");
+					this.setState({myTrip:true});
 				}
 
 			})
@@ -426,45 +424,7 @@ class ShowVoyage extends Component {
 		xhttp.onreadystatechange = function () {
 			if (this.readyState === 4 && this.status === 200) {
 				const param = JSON.parse(this.responseText);
-				//console.log("Voyage : "); console.log(param);
-				parentVoyage.setState({
-					toRender: (
-						<div>
-							<NavigationBar
-								connected={parentVoyage.props.connected}
-								connect={parentVoyage.props.connect}
-							/>
-							<div id="carteSide">
-								<Map id="ShowVoyageMap" center={[40.0, 3.0]} zoom={1}>
-									<TileLayer
-										attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-										url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-									/>
-
-									{param.stages.map((etape) => (
-										<Marker position={[etape.lng, etape.lat]}>
-											<Popup>
-												<h1>{etape.description}</h1>
-											</Popup>
-										</Marker>
-									))}
-								</Map>
-							</div>
-
-							<div id="information">
-								<EnteteVoyage param={param} connect={parentVoyage.props.connect} connected={parentVoyage.props.connected} />
-
-								<div id="etapes">
-									{//console.log(param)
-									}
-									{param.stages.map((etape) => (
-										<EtapeVoyage etape={etape} photos={etape.photos} />
-									))}
-								</div>
-							</div>
-						</div>
-					),
-				});
+				parentVoyage.setState({ param: param });
 			}
 		};
 		xhttp.open(
@@ -476,11 +436,54 @@ class ShowVoyage extends Component {
 	}
 
 	render() {
-		let content = (
-			<div>
-				<div>{this.state.toRender}</div>
-			</div>
-		);
+		var content = "";
+		if (!this.state.param) {
+			content = (
+				<h1>Chargement en cours...</h1>
+			);
+		} else {
+			content = (
+				<div>
+					<NavigationBar
+						connected={this.props.connected}
+						connect={this.props.connect}
+					/>
+					<div id="carteSide">
+						<Map id="ShowVoyageMap" center={[40.0, 3.0]} zoom={1}>
+							<TileLayer
+								attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+								url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+							/>
+
+							{this.state.param.stages.map((etape) => (
+								<Marker position={[etape.lng, etape.lat]}>
+									<Popup>
+										<h1>{etape.description}</h1>
+									</Popup>
+								</Marker>
+							))}
+						</Map>
+					</div>
+
+					<div id="information">
+						<EnteteVoyage param={this.state.param} connect={this.props.connect} connected={this.props.connected} />
+                        {this.state.myTrip ?
+                            <AddStep tripId={this.state.param.id} key={"firstAddStep"} stepKey={"firstAddStep"} token={this.props.token} />
+                            //console.log("here")
+                            :
+                            console.log("not here")
+                        }
+						<div id="etapes">
+							{console.log(this.state.myTrip)
+							}
+							{this.state.param.stages.map((etape, i) => (
+								<EtapeVoyage tripId={this.state.param.id} etape={etape} editStepKey={i} photos={etape.photos} myTrip={this.state.myTrip} token={this.props.token} />
+							))}
+						</div>
+					</div>
+				</div>
+				);
+		}
 		return content;
 	}
 }
