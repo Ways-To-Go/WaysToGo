@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import "./App.css";
 
 // Gere l'ajout d'image et l'affichage. https://stackoverflow.com/questions/38049966/get-image-preview-before-uploading-in-react
@@ -19,42 +19,27 @@ export default class Upload extends React.Component {
 		this.setState({
 			filesToShow: [...this.state.filesToShow, ...event.target.files] // ajout des nouvelles images a ceux deja existantes
 		});
-		console.log(this.state.files);
 
-		//console.log([...event.target.files]);
 		var parentUpload = this;
-		var totalEndUpload = 0;
+		var totalEndUpload = 0; // on desactive le bouton d'envoi. Quand toutes les images sont uploadées en ligne (totalEndUpload == images.length) on ré-active le bouton
 		var images = event.target.files;
 		[...event.target.files].map(function (file) {
 			// senf img to imgbb for saving
-			//console.log('send...');
 			var xhttp = new XMLHttpRequest();
 			var img = file;
 			xhttp.onreadystatechange = function () {
 				if (this.readyState === 4 && this.status === 200) {
-					//console.log("upload finit");
-
-
-
 
 					var xhttp = new XMLHttpRequest();
 					xhttp.onreadystatechange = function () {
-						//console.log(this.responseText);
 						if (this.readyState === 4 && this.status === 201) {
-							console.log("Upload photo in API success");
+							console.log("Upload photo in API : success");
 
-							//parentUpload.state.urllist.push(JSON.parse(this.responseText).id); // ajout des nouvelles url d'images a ceux deja existantes
-							parentUpload.props.addImgFile({ image: img, idAPI: JSON.parse(this.responseText).id });
-							//parentUpload.setState({
-							//	files: parentUpload.props.files.concat({ image: img, idAPI: JSON.parse(this.responseText).id }) // ajout des nouvelles images a ceux deja existantes
-							//});
+							parentUpload.props.addImgFile({ image: img, image_URL_BDD: "/api/photos/" + JSON.parse(this.responseText).id });
 							totalEndUpload += 1;
-							//console.log(parentUpload.state.files);
 							if (totalEndUpload == images.length) {
 								parentUpload.props.changeButtonState(false);
 							}
-							//parentUpload.state.files = [];
-							//parentUpload.state.urllist = [];
 						}
 					};
 					xhttp.open("POST", "https://wtg.aymerik-diebold.fr/api/photos", true);
@@ -65,21 +50,14 @@ export default class Upload extends React.Component {
 						//stage: parentVoyage.newDepartureTransport.current.value,
 						isCover: false
 					}));
-
-
-
-
-
 				}
 			};
-
 
 			xhttp.open("POST", "https://api.imgur.com/3/image", true);
 			xhttp.setRequestHeader('Authorization', 'Client-ID 140f137c33f88ac');
 
 			var data = new FormData();
 			data.append('image', file);
-
 			xhttp.send(data);
 		})
 	}

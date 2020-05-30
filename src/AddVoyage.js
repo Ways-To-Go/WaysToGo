@@ -208,7 +208,7 @@ class CreationVoyageAjoutEtapes extends React.Component {
 			var listformat = [];
 			//console.log(this.state.files);
 			this.state.files.forEach(function (item) {
-				listformat.push("/api/photos/" + item.idAPI);
+				listformat.push(item.image_URL_BDD);
 			});
 			//console.log(listformat);
 
@@ -321,15 +321,11 @@ class CreationVoyageAjoutEtapes extends React.Component {
 }
 
 
+// a terme, il faudrait faire une jolie popup
 class ModalChargement extends React.Component {
 	render() {
 		return (
-			<div class="modal_chargement">
-				<div class="modal-content">
-					<p>Chargement</p>
-
-				</div>
-			</div>
+			<h2>Chargement</h2>
 		)
 	}
 }
@@ -405,27 +401,8 @@ export default class AddVoyage extends Component {
 			ecolo: false
 		};
 
-		//this.renouvelerToken = this.renouvelerToken.bind(this);
 		this.addMyVoyage = this.addMyVoyage.bind(this)
 	}
-
-	/*renouvelerToken() {
-		var xhttp = new XMLHttpRequest();
-		var parentToken = this;
-		xhttp.onreadystatechange = function () {
-			if (this.readyState === 4 && this.status === 200) {
-				parentToken.state.token = JSON.parse(this.responseText).token;
-				parentToken.props.updateToken(parentToken.state.token);
-				parentToken.addMyVoyage(parentToken.state.name, parentToken.state.description, parentToken.state.vegan, parentToken.state.ecolo);
-			}
-		};
-		xhttp.open("POST", "https://wtg.aymerik-diebold.fr/login_check", true);
-		xhttp.setRequestHeader('Content-Type', 'application/json');
-		xhttp.send(JSON.stringify({
-			"username": "mailleon@gmail.com",
-			"password": "monmdp111A!"
-		}));
-	}*/
 
 	addMyVoyage(newname, newdescription, newvegan, newecolo) {
 		//console.log(newname, newdescription, newvegan, newecolo);

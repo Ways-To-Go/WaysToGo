@@ -18,6 +18,8 @@ export default class About extends Component {
 				<p>WaysToGo allows you to share your trips to everyone. <br></br>Search new trips, begin new adventures :)</p>
 				<p>Founded by Caroline Texier and Arnaud Stoffel</p>
 				<p>Developed by Aymerik Diebold, Jiacheng Zhou, Léon Davidovski, Youssef El Saadany with &#x2665;</p>
+				<br></br>
+				<p>Developed with React and Symfony. Photos hosted by Imgur.com. Powered by Nominatim from OpenStreetMap.</p>
 			</div>
 		);
 	}

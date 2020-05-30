@@ -3,7 +3,8 @@ import "./App.css";
 import Upload from "./Upload";
 import ResearchBarCity from "./ResearchBarCity";
 
-
+// affiche une popup permettant de modifier un voyage donné/
+// reload la page si modification
 export default class AddStep extends Component {
 	constructor(props) {
 		super(props);
@@ -31,15 +32,16 @@ export default class AddStep extends Component {
 		this.inputphotoToReset = React.createRef();
 	}
 
+	// add a new step to a trip.
+	// create the step, then add the transportation
 	addFunction() {
 		if (this.newName.current.value != "" && this.newDate.current.value != ""
 			&& this.newDateDepart.current.value != "" && this.newCity.current.value != "") {
+
+			// si l'utilisateur met de nouvelles photos, on change tout. Si il n'en met pas de nouvelles, on laisse les anciennes
 			var listformat = [];
-			if (this.state.files.length > 0) {
-				this.state.files.forEach(function (item) {
-					listformat.push("/api/photos/" + item.idAPI);
-				});
-			} else listformat = this.props.photos;
+			if (this.state.files.length > 0) listformat = this.state.files;
+			else listformat = this.props.photos;
 
 			var xhttp = new XMLHttpRequest();
 			var parentVoyage = this;
@@ -96,7 +98,7 @@ export default class AddStep extends Component {
 
 	// to edit pictures
 	addImgFile(img) {
-		this.state.files.push(img);
+		this.state.files.push(img.image_URL_BDD);
 	}
 	changeButtonState(etat) {
 		this.boutonOK2.current.disabled = etat; // disable button when upload, prevent button to be push until we have the ling of the image

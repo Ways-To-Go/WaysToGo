@@ -5,7 +5,7 @@ import ResearchBarCity from "./ResearchBarCity";
 
 
 // show a button : delete trip when clicked
-// parameters : id (the id of trip to be delete)
+// parameters : id (the id of trip to be delete) + token
 // return to the main page after deletion
 export class ButtonDeleteTrip extends Component {
 	deleteTrip() {
@@ -35,7 +35,7 @@ export class ButtonDeleteTrip extends Component {
 
 class EditStep extends Component {
 	constructor(props) {
-        super(props);
+		super(props);
 		this.state = {
 			files: [],
 			title: props.step.title,
@@ -75,15 +75,11 @@ class EditStep extends Component {
 	}
 
 	editFunction() {
+
+		// si l'utilisateur met de nouvelles photos, on change tout. Si il n'en met pas de nouvelles, on laisse les anciennes
 		var listformat = [];
-		//console.log(this.state.files);
-		if (this.state.files.length > 0) {
-			this.state.files.forEach(function (item) {
-				listformat.push("/api/photos/" + item.idAPI);
-			});
-		} else {
-			listformat = this.props.photos;
-		}
+		if (this.state.files.length > 0) listformat = this.state.files;
+		else listformat = this.props.photos;
 
 		var xhttp = new XMLHttpRequest();
 		var parentVoyage = this;
@@ -129,26 +125,26 @@ class EditStep extends Component {
 			title: this.newName.current.value,
 			photos: listformat
 		}));
-    }
+	}
 
-    deleteFunction() {
-        var xhttp = new XMLHttpRequest();
-        var parentVoyage = this;
-        xhttp.onreadystatechange = function() {
-            console.log(this.responseText);
-            //var res = this.responseText;
-            if (this.readyState === 4 && this.status === 204) {
-                parentVoyage.toggleModal();
+	deleteFunction() {
+		var xhttp = new XMLHttpRequest();
+		var parentVoyage = this;
+		xhttp.onreadystatechange = function () {
+			console.log(this.responseText);
+			//var res = this.responseText;
+			if (this.readyState === 4 && this.status === 204) {
+				parentVoyage.toggleModal();
 				document.location.reload(true);
 
-            }
-        };
+			}
+		};
 
-        xhttp.open("DELETE", "https://wtg.aymerik-diebold.fr/api/stages/" + this.state.id, true);
-        xhttp.setRequestHeader('Authorization', 'Bearer ' + this.props.token);
-        xhttp.setRequestHeader('Content-Type', 'application/json');
-        xhttp.send();
-    }
+		xhttp.open("DELETE", "https://wtg.aymerik-diebold.fr/api/stages/" + this.state.id, true);
+		xhttp.setRequestHeader('Authorization', 'Bearer ' + this.props.token);
+		xhttp.setRequestHeader('Content-Type', 'application/json');
+		xhttp.send();
+	}
 
 	getLatLnt(lat, lnt) {
 		this.setState({
@@ -162,45 +158,29 @@ class EditStep extends Component {
 	// to edit pictures
 
 	addImgFile(img) {
-		//console.log(this);
-		//console.log(this.state);
-		//console.log(img);
-		this.state.files.push(img);
-		/*this.setState = {
-			files: this.state.files.concat(img) // ajout des nouvelles images a ceux deja existantes
-		};*/
-		console.log(this.state);
+		this.state.files.push(img.image_URL_BDD);
 	}
 	changeButtonState(etat) {
-		console.log("chargement");
 		this.boutonOK.current.disabled = etat;
-		if (etat === true)
-			this.boutonOK.current.textContent = "Image upload in progress..."
-		else
-			this.boutonOK.current.textContent = "Add step"
-		//console.log("change etat avec : ", etat);
+		if (etat === true) this.boutonOK.current.textContent = "Image upload in progress..."
+		else this.boutonOK.current.textContent = "Add step"
 	}
 
 	toggleModal() {
-		console.log("toggle modal edit");
-
 		// change values inside the modal
 		this.newName.current.value = this.state.title;
 		this.newCity.current.value = this.state.city;
 		this.newDate.current.value = this.state.arrival;
-        this.newDateDepart.current.value = this.state.departure;
-        console.log(this.state.departureTransport);
-        //if (this.newDepartureTransport.current.value != "undefined") this.newDepartureTransport.current.value = this.state.departureTransport;
-        //else this.newDepartureTransport.current.value = "";
-        this.newDepartureTransport.current.value = this.state.departureTransport;
-        this.newDescription.current.value = this.state.description;
+		this.newDateDepart.current.value = this.state.departure;
+		this.newDepartureTransport.current.value = this.state.departureTransport;
+		this.newDescription.current.value = this.state.description;
 
 		// toggle modal
 		this.modal.current.classList.toggle("show-modal");
 	}
 
+	// render the modal
 	render() {
-		//console.log("je suis dans editStep");
 		return (
 			<div>
 				<div ref={this.modal} class="modal2">
@@ -228,7 +208,7 @@ class EditStep extends Component {
 						<Upload key={"addStep" + this.props.stepKey} uploadID={"editStep" + this.props.stepKey} token={this.props.token} addImgFile={this.addImgFile} files={this.state.files} changeButtonState={this.changeButtonState.bind(this)} imgcontainer={this.imgcontainer} refInput={this.inputphotoToReset} />
 
 						<button type="button" ref={this.boutonOK} onClick={this.editFunction.bind(this)}>Edit step</button>
-                        <button type="button" ref={this.boutonDelete} onClick={this.deleteFunction.bind(this)}>Delete step</button>
+						<button type="button" ref={this.boutonDelete} onClick={this.deleteFunction.bind(this)}>Delete step</button>
 					</div>
 				</div>
 				<button type="button" onClick={this.toggleModal}>Edit step</button>
