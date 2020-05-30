@@ -36,7 +36,6 @@ export class ButtonDeleteTrip extends Component {
 class EditStep extends Component {
 	constructor(props) {
         super(props);
-        console.log(props.step);
 		this.state = {
 			files: [],
 			title: props.step.title,

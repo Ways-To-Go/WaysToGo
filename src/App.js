@@ -38,7 +38,7 @@ export default class App extends Component {
 			})
 				.then((res) => {
 					this.setState({ connected: res.data.id });
-					console.log(document.cookie);
+					//console.log(document.cookie);
 				})
 				.catch((err) => {
 					console.log("wut");
