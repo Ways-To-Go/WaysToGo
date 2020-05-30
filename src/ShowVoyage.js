@@ -3,7 +3,7 @@ import "./App.css";
 import { Map, TileLayer, Marker, Popup } from "react-leaflet";
 import NavigationBar from "./NavigationBar";
 import Axios from "axios";
-import EditStep from "./editStep.js";
+import EditStep, { ButtonDeleteTrip } from "./editStep.js";
 import AddStep from "./addStep.js";
 
 // show the head of the trip
@@ -177,7 +177,7 @@ export class EnteteVoyage extends Component {
 			};
 			xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/users/" + superThis.getCookie("id"), true);
 			xhttp.setRequestHeader('Content-Type', 'application/json');
-			xhttp.setRequestHeader('Authorization', 'Bearer ' + superThis.getCookie("token"));
+			xhttp.setRequestHeader('Authorization', 'Bearer ' + superThis.props.token);
 			xhttp.send();
 		}
 	}
@@ -220,7 +220,7 @@ export class EnteteVoyage extends Component {
 					};
 					xhttp2.open("PATCH", "https://wtg.aymerik-diebold.fr/api/users/" + superThis.getCookie("id"), true);
 					xhttp2.setRequestHeader('Content-Type', 'application/merge-patch+json');
-					xhttp2.setRequestHeader('Authorization', 'Bearer ' + superThis.getCookie("token"));
+					xhttp2.setRequestHeader('Authorization', 'Bearer ' + superThis.props.token);
 
 					//console.log([...new Set(listformat)]);
 					xhttp2.send(JSON.stringify({
@@ -243,7 +243,7 @@ export class EnteteVoyage extends Component {
 					//console.log("https://wtg.aymerik-diebold.fr/api/users/" + superThis.getCookie("id"));
 					xhttp2.open("PATCH", "https://wtg.aymerik-diebold.fr/api/users/" + superThis.getCookie("id"), true);
 					xhttp2.setRequestHeader('Content-Type', 'application/merge-patch+json');
-					xhttp2.setRequestHeader('Authorization', 'Bearer ' + superThis.getCookie("token"));
+					xhttp2.setRequestHeader('Authorization', 'Bearer ' + superThis.props.token);
 
 					listformat.push("/api/trips/" + superThis.props.param.id);
 					//console.log([...new Set(listformat)]);
@@ -255,7 +255,7 @@ export class EnteteVoyage extends Component {
 		};
 		xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/users/" + this.getCookie("id"), true);
 		xhttp.setRequestHeader('Content-Type', 'application/merge-patch+json');
-		xhttp.setRequestHeader('Authorization', 'Bearer ' + this.getCookie("token"));
+		xhttp.setRequestHeader('Authorization', 'Bearer ' + this.props.token);
 		xhttp.send();
 	}
 
@@ -310,8 +310,11 @@ export class EnteteVoyage extends Component {
 						/>
 					</div>
 				) : (
+						<div>
+							<ButtonDeleteTrip id={this.state.param.id} token={this.props.token} />
 						<button ref={this.saveTripButton} style={{ visibility: "hidden" }} type="button" onClick={() => this.saveTrip()}>Save this trip</button>
-					)}
+							</div>
+							)}
 			</div>
 		);
 	}
@@ -347,7 +350,7 @@ export class EtapeVoyage extends React.Component {
 					{console.log("test here")}
 					{console.log(this.props.etape)}
 					{this.props.myTrip ? 
-						<EditStep key={this.props.editStepKey} stepKey={this.props.editStepKey} step={this.props.etape} token={this.props.token} />
+						<EditStep key={this.props.editStepKey.toString + "add"} stepKey={this.props.editStepKey} step={this.props.etape} token={this.props.token} />
 						//console.log("here")
 						:
 						console.log("not here")
@@ -466,7 +469,7 @@ class ShowVoyage extends Component {
 					</div>
 
 					<div id="information">
-						<EnteteVoyage param={this.state.param} connect={this.props.connect} connected={this.props.connected} />
+						<EnteteVoyage param={this.state.param} token={this.props.token} connect={this.props.connect} connected={this.props.connected} />
                         {this.state.myTrip ?
                             <AddStep tripId={this.state.param.id} key={"firstAddStep"} stepKey={"firstAddStep"} token={this.props.token} />
                             //console.log("here")
@@ -477,7 +480,7 @@ class ShowVoyage extends Component {
 							{console.log(this.state.myTrip)
 							}
 							{this.state.param.stages.map((etape, i) => (
-								<EtapeVoyage tripId={this.state.param.id} etape={etape} editStepKey={i} photos={etape.photos} myTrip={this.state.myTrip} token={this.props.token} />
+								<EtapeVoyage key={i} tripId={this.state.param.id} etape={etape} editStepKey={i} photos={etape.photos} myTrip={this.state.myTrip} token={this.props.token} />
 							))}
 						</div>
 					</div>

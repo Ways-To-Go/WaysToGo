@@ -4,6 +4,35 @@ import Upload from "./Upload";
 import ResearchBarCity from "./ResearchBarCity";
 
 
+// show a button : delete trip when clicked
+// parameters : id (the id of trip to be delete)
+// return to the main page after deletion
+export class ButtonDeleteTrip extends Component {
+	deleteTrip() {
+		var response = window.confirm("Delete ?");
+		if (response == true) {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function () {
+				//console.log(this.responseText);
+				if (this.readyState === 4 && this.status === 204) {
+					window.location = "http://localhost:3000/WaysToGo/";
+				}
+			};
+
+			xhttp.open("DELETE", "https://wtg.aymerik-diebold.fr/api/trips/" + this.props.id, true);
+			xhttp.setRequestHeader('Authorization', 'Bearer ' + this.props.token);
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.send();
+		}
+	}
+
+	render() {
+		return (
+			<button type="button" onClick={this.deleteTrip.bind(this)}>Delete step</button>
+		);
+	}
+}
+
 class EditStep extends Component {
 	constructor(props) {
         super(props);
@@ -14,15 +43,13 @@ class EditStep extends Component {
 			city: props.step.city,
 			arrival: props.step.arrival,
 			departure: props.step.departure,
-			departureTransport: props.step.departureTransport.type,
+			//departureTransport: props.step.departureTransport.type,
 			description: props.step.description,
 			id: props.step.id,
 			photos: props.step.photos
 		};
-		if (props.step.departureTransport)
-			this.setState = {
-				departureTransport: props.step.departureTransport.type
-			};
+		if (props.step.departureTransport !== 'undefined')
+			this.state.departureTransport = props.step.departureTransport.type;
 
 		this.editFunction = this.editFunction.bind(this);
 		this.getLatLnt = this.getLatLnt.bind(this);
@@ -45,19 +72,12 @@ class EditStep extends Component {
 		this.imgcontainer = React.createRef();
 		this.inputphotoToReset = React.createRef();
 
-		this.initValues = this.initValues.bind(this);
 		this.toggleModal = this.toggleModal.bind(this);
 	}
 
-	initValues() {
-	}
-	componentDidMount() {
-		this.initValues();
-	};
-
 	editFunction() {
 		var listformat = [];
-		console.log(this.state.files);
+		//console.log(this.state.files);
 		if (this.state.files.length > 0) {
 			this.state.files.forEach(function (item) {
 				listformat.push("/api/photos/" + item.idAPI);
@@ -69,20 +89,20 @@ class EditStep extends Component {
 		var xhttp = new XMLHttpRequest();
 		var parentVoyage = this;
 		xhttp.onreadystatechange = function () {
-			//console.log(this.responseText);
+			console.log(this.responseText);
 			var res = this.responseText;
 			if (this.readyState === 4 && this.status === 200) {
 				// maintenant on envoi le transport
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function () {
-					//console.log(this.responseText);
+					console.log(this.responseText);
 					if (this.readyState === 4 && this.status === 200) {
 						//console.log("Upload transport etape success");
 						parentVoyage.toggleModal();
 						document.location.reload(true);
 					}
 				};
-				console.log("https://wtg.aymerik-diebold.fr" + JSON.parse(res).departureTransport);
+
 				xhttp.open("PATCH", "https://wtg.aymerik-diebold.fr" + JSON.parse(res).departureTransport, true);
 				xhttp.setRequestHeader('Authorization', 'Bearer ' + parentVoyage.props.token);
 				xhttp.setRequestHeader('Content-Type', 'application/merge-patch+json');
@@ -105,19 +125,11 @@ class EditStep extends Component {
 			description: this.newDescription.current.value,
 			arrival: this.newDate.current.value,
 			departure: this.newDateDepart.current.value,
-			//departureTransport: this.newDepartureTransport.current.value,
-			//trip: "/api/trips/" + this.state.id,
 			lng: this.state.newLat,
 			lat: this.state.newLnt,
 			title: this.newName.current.value,
 			photos: listformat
 		}));
-
-		/*this.props.returnEditStep({
-			stepName: this.newName.current.value, stepLocation: this.newCity.current.value,
-			stepArrivalDate: this.newDate.current.value, stepDepartureDate: this.newDateDepart.current.value,
-			stepDepartureTransport: this.newDepartureTransport.current.value, stepDescription: this.newDescription.current.value,
-			stepPhotos:this.state.files});*/
     }
 
     deleteFunction() {
@@ -126,26 +138,9 @@ class EditStep extends Component {
         xhttp.onreadystatechange = function() {
             console.log(this.responseText);
             //var res = this.responseText;
-            if (this.readyState === 4 && this.status === 200) {
-                // maintenant on envoi le transport
-                /*var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    //console.log(this.responseText);
-                    if (this.readyState === 4 && this.status === 200) {
-                        //console.log("Upload transport etape success");
-                        parentVoyage.toggleModal();
-                        document.location.reload(true);
-                    }
-                };
-                console.log("https://wtg.aymerik-diebold.fr" + JSON.parse(res).departureTransport);
-                xhttp.open("PATCH", "https://wtg.aymerik-diebold.fr" + JSON.parse(res).departureTransport, true);
-                xhttp.setRequestHeader('Authorization', 'Bearer ' + parentVoyage.props.token);
-                xhttp.setRequestHeader('Content-Type', 'application/merge-patch+json');
-                xhttp.send(JSON.stringify({
-                    stageFrom: "/api/stages/" + JSON.parse(res).id,
-                    type: parentVoyage.newDepartureTransport.current.value,
-                    distance: 0
-                }));*/
+            if (this.readyState === 4 && this.status === 204) {
+                parentVoyage.toggleModal();
+				document.location.reload(true);
 
             }
         };
@@ -178,6 +173,7 @@ class EditStep extends Component {
 		console.log(this.state);
 	}
 	changeButtonState(etat) {
+		console.log("chargement");
 		this.boutonOK.current.disabled = etat;
 		if (etat === true)
 			this.boutonOK.current.textContent = "Image upload in progress..."
@@ -230,7 +226,7 @@ class EditStep extends Component {
 						<label for="ldescription">Your story</label>
 						<textarea ref={this.newDescription} id="ldescription" name="ldescription" placeholder="What you want.."></textarea>
 
-						<Upload key={"addStep" + this.props.stepKey} uploadID={"editStep"} token={this.props.token} addImgFile={this.addImgFile} files={this.state.files} changeButtonState={this.changeButtonState.bind(this)} imgcontainer={this.imgcontainer} refInput={this.inputphotoToReset} />
+						<Upload key={"addStep" + this.props.stepKey} uploadID={"editStep" + this.props.stepKey} token={this.props.token} addImgFile={this.addImgFile} files={this.state.files} changeButtonState={this.changeButtonState.bind(this)} imgcontainer={this.imgcontainer} refInput={this.inputphotoToReset} />
 
 						<button type="button" ref={this.boutonOK} onClick={this.editFunction.bind(this)}>Edit step</button>
                         <button type="button" ref={this.boutonDelete} onClick={this.deleteFunction.bind(this)}>Delete step</button>

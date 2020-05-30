@@ -19,6 +19,7 @@ export default class Upload extends React.Component {
 		this.setState({
 			filesToShow: [...this.state.filesToShow, ...event.target.files] // ajout des nouvelles images a ceux deja existantes
 		});
+		console.log(this.state.files);
 
 		//console.log([...event.target.files]);
 		var parentUpload = this;
