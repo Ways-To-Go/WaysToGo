@@ -47,7 +47,7 @@ class EditStep extends Component {
 			id: props.step.id,
 			photos: props.step.photos
 		};
-		if (props.step.departureTransport !== 'undefined')
+		if (props.step.departureTransport && props.step.departureTransport !== 'undefined')
 			this.state.departureTransport = props.step.departureTransport.type;
 
 		this.editFunction = this.editFunction.bind(this);
