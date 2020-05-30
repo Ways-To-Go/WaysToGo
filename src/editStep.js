@@ -15,7 +15,7 @@ export class ButtonDeleteTrip extends Component {
 			xhttp.onreadystatechange = function () {
 				//console.log(this.responseText);
 				if (this.readyState === 4 && this.status === 204) {
-					window.location = "http://localhost:3000/WaysToGo/";
+					window.location = window.location.hostname; // return to hostpage
 				}
 			};
 
