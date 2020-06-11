@@ -54,7 +54,7 @@ export default class NavigationBar extends Component {
           .then((res) => {
             console.log(res);
             const cookies = new Cookies();
-			  cookies.set("id", res.data.id, { path: "/" });
+            cookies.set("id", res.data.id, { path: "/" });
           })
           .catch((err) => {
             console.log("Error when retrieve user id");
@@ -123,7 +123,6 @@ export default class NavigationBar extends Component {
         });
     }
   };
-
 
   getStyleLogin = () => {
     return {
@@ -198,6 +197,16 @@ export default class NavigationBar extends Component {
           </a>
         ) : (
           <a href={"?show=research"}>Recherche</a>
+        )}
+        {this.props.connected ? (
+          <a
+            class={this.props.active == 6 ? "active" : ""}
+            href="?show=settings"
+          >
+            Settings
+          </a>
+        ) : (
+          <span></span>
         )}
 
         <div id="login" style={this.getStyleLogin()}>
