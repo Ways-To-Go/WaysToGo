@@ -36,14 +36,15 @@ export class ButtonDeleteTrip extends Component {
 class EditStep extends Component {
 	constructor(props) {
 		super(props);
+		//console.log(props);
 		this.state = {
 			files: [],
-			title: props.step.title,
-			city: props.step.city,
-			arrival: props.step.arrival,
-			departure: props.step.departure,
+			//title: props.step.title,
+			//city: props.step.city,
+			//arrival: props.step.arrival,
+			//departure: props.step.departure,
 			//departureTransport: props.step.departureTransport.type,
-			description: props.step.description,
+			//description: props.step.description,
 			id: props.step.id,
 			photos: props.step.photos
 		};
@@ -75,26 +76,54 @@ class EditStep extends Component {
 	}
 
 	editFunction() {
-
 		// si l'utilisateur met de nouvelles photos, on change tout. Si il n'en met pas de nouvelles, on laisse les anciennes
 		var listformat = [];
+		if (this.props.reload) {
+			if (this.state.files.length > 0) listformat = this.state.files;
+			else listformat = this.props.photos;
+		} else {
+			if (this.state.files.length > 0)
+				this.state.files.forEach(function (item) {
+					listformat.push(item.image_URL_BDD);
+				});
+			else listformat = this.props.photos;
+		}
+
+		// si l'utilisateur met de nouvelles photos, on change tout. Si il n'en met pas de nouvelles, on laisse les anciennes
+		/*var listformat = [];
 		if (this.state.files.length > 0) listformat = this.state.files;
-		else listformat = this.props.photos;
+		else listformat = this.props.photos;*/
 
 		var xhttp = new XMLHttpRequest();
 		var parentVoyage = this;
 		xhttp.onreadystatechange = function () {
-			console.log(this.responseText);
+			//console.log(this.responseText);
 			var res = this.responseText;
 			if (this.readyState === 4 && this.status === 200) {
 				// maintenant on envoi le transport
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function () {
-					console.log(this.responseText);
+					//console.log(this.responseText);
 					if (this.readyState === 4 && this.status === 200) {
-						//console.log("Upload transport etape success");
-						parentVoyage.toggleModal();
-						document.location.reload(true);
+						//console.log("here");
+						res = JSON.parse(res);
+						res.departureTransport = { "type": parentVoyage.newDepartureTransport.current.value };
+						//console.log(parentVoyage.newDepartureTransport.current.value);
+						//console.log(parentVoyage.newDepartureTransport);
+						if (parentVoyage.props.reload) document.location.reload(true); //reload page to see modifications
+						else parentVoyage.props.callback({
+							city: parentVoyage.newCity.current.value,
+							description: parentVoyage.newDescription.current.value,
+							arrival: parentVoyage.newDate.current.value,
+							departure: parentVoyage.newDateDepart.current.value,
+							title: parentVoyage.newName.current.value,
+							departureTransport: { 'type': parentVoyage.newDepartureTransport.current.value },
+							photos: parentVoyage.state.files,
+							etape: res
+						})
+						//parentVoyage.toggleModal();
+						parentVoyage.closeModal();
+						//document.location.reload(true);
 					}
 				};
 
@@ -131,11 +160,13 @@ class EditStep extends Component {
 		var xhttp = new XMLHttpRequest();
 		var parentVoyage = this;
 		xhttp.onreadystatechange = function () {
-			console.log(this.responseText);
+			//console.log(this.responseText);
 			//var res = this.responseText;
 			if (this.readyState === 4 && this.status === 204) {
+				if (parentVoyage.props.reload) document.location.reload(true); //reload page to see modifications
+				//else parentVoyage.props.callback(true);
 				parentVoyage.toggleModal();
-				document.location.reload(true);
+				//document.location.reload(true);
 
 			}
 		};
@@ -158,22 +189,30 @@ class EditStep extends Component {
 	// to edit pictures
 
 	addImgFile(img) {
-		this.state.files.push(img.image_URL_BDD);
+		if (this.props.reload) this.state.files.push(img.image_URL_BDD);
+		else this.state.files.push(img);
 	}
 	changeButtonState(etat) {
 		this.boutonOK.current.disabled = etat;
 		if (etat === true) this.boutonOK.current.textContent = "Image upload in progress..."
-		else this.boutonOK.current.textContent = "Add step"
+		else this.boutonOK.current.textContent = "Edit step"
+	}
+	closeModal() {
+		// toggle modal
+		this.modal.current.classList.toggle("show-modal");
 	}
 
 	toggleModal() {
 		// change values inside the modal
-		this.newName.current.value = this.state.title;
-		this.newCity.current.value = this.state.city;
-		this.newDate.current.value = this.state.arrival;
-		this.newDateDepart.current.value = this.state.departure;
-		this.newDepartureTransport.current.value = this.state.departureTransport;
-		this.newDescription.current.value = this.state.description;
+		//console.log(this.props.step);
+		this.newName.current.value = this.props.step.title;
+		this.newCity.current.value = this.props.step.city;
+		this.newDate.current.value = this.props.step.arrival;
+		this.newDateDepart.current.value = this.props.step.departure;
+		this.newDepartureTransport.current.value = this.props.step.departureTransport.type;
+		this.newDescription.current.value = this.props.step.description;
+
+		//console.log(this.newCity.current.value);
 
 		// toggle modal
 		this.modal.current.classList.toggle("show-modal");
@@ -205,7 +244,7 @@ class EditStep extends Component {
 						<label for="ldescription">Your story</label>
 						<textarea ref={this.newDescription} id="ldescription" name="ldescription" placeholder="What you want.."></textarea>
 
-						<Upload key={"addStep" + this.props.stepKey} uploadID={"editStep" + this.props.stepKey} token={this.props.token} addImgFile={this.addImgFile} files={this.state.files} changeButtonState={this.changeButtonState.bind(this)} imgcontainer={this.imgcontainer} refInput={this.inputphotoToReset} />
+						<Upload key={"editStep" + this.props.stepKey} uploadID={"editStep" + this.props.stepKey} token={this.props.token} addImgFile={this.addImgFile} files={this.state.files} changeButtonState={this.changeButtonState.bind(this)} imgcontainer={this.imgcontainer} refInput={this.inputphotoToReset} />
 
 						<button type="button" ref={this.boutonOK} onClick={this.editFunction.bind(this)}>Edit step</button>
 						<button type="button" ref={this.boutonDelete} onClick={this.deleteFunction.bind(this)}>Delete step</button>

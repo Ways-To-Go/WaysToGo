@@ -26,7 +26,7 @@ export default class ShowCarte extends Component {
         parentThis.setState({
           voyages: JSON.parse(this.response)["hydra:member"], // stock all trips
         });
-        console.log(JSON.parse(this.response));
+        //console.log(JSON.parse(this.response));
       }
     };
     xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/trips", true);

@@ -1,46 +1,47 @@
 import React, { Component } from "react";
 import "./App.css";
 import { EnteteVoyage } from "./ShowVoyage";
-import ReactDOM from "react-dom";
 import NavigationBar from "./NavigationBar";
-import Upload from "./Upload";
-import ResearchBarCity from "./ResearchBarCity";
+import EditStep, { ButtonDeleteTrip } from "./editStep.js";
+import AddStep from "./addStep";
 
-/* Parametre : 
- * arguments {
- *	name {
- *		value
- *	},
- *	location {
- *		value
- *	},
- *	date {
- *		value
- *	},
- *	story {
- *		value
- *	},
- *	files {
- *		value
- *	},
- * }
- */
 class UneEtape extends React.Component {
 	constructor(props) {
 		super(props);
-
+		this.state = {
+			step: JSON.parse(props.etape)
+		};
+		this.state.step.departureTransport = { "type": props.transport };
+		//console.log(this.state.step);
 		this.refLocation = React.createRef();
 		this.refName = React.createRef();
 		this.refDate = React.createRef();
 		this.refDescription = React.createRef();
 		this.refDateDepart = React.createRef();
 		this.refDepartureTransport = React.createRef();
+
+		this.editEtapeVoyage = this.editEtapeVoyage.bind(this);
+	}
+
+	editEtapeVoyage(parameters) {
+		//console.log(parameters);
+		this.setState({
+			step: parameters.etape
+		})
+		this.refLocation.current.innerHTML = parameters.city;
+		this.refName.current.innerHTML = parameters.title;
+		this.refDate.current.innerHTML = parameters.arrival;
+		this.refDescription.current.innerHTML = parameters.description;
+		this.refDateDepart.current.innerHTML = parameters.departure;
+		this.refDepartureTransport.current.innerHTML = parameters.departureTransport.type;
+		//console.log(parameters.departureTransport.type);
+		//console.log(this.refDepartureTransport.current.innerHTML);
 	}
 
 	render() {
 		return (
 			<div class="etapevoyage">
-				<button type="button" onClick={() => this.props.editStepLink(this.refName, this.refLocation, this.refDate, this.refDateDepart, this.refDepartureTransport, this.refDescription)}>Edit step</button>
+				<EditStep key={this.props.editStepKey} reload={false} callback={this.editEtapeVoyage} stepKey={this.state.editStepKey} step={this.state.step} token={this.props.token} />
 				<br></br>
 
 				<label>Location : </label>
@@ -68,7 +69,7 @@ class UneEtape extends React.Component {
 				<br></br>
 
 				{this.props.arguments.files && [...this.props.arguments.files].map((file, i) => (
-					<img key={i} width="200px" height="200px" src={URL.createObjectURL(file.image)} alt="Image" />
+					<img key={this.props.editStepKey + i} width="200px" height="200px" src={URL.createObjectURL(file.image)} alt="Image" />
 				))}
 			</div>
 		)
@@ -85,10 +86,8 @@ class CreationVoyageAjoutEtapes extends React.Component {
 			vegan: props.vegan,
 			ecolo: props.ecolo,
 			voyageId: props.voyageId,
-			editStepBool: false,
-			//trips: props.trips,
-
-			files: []
+			files: [],
+			allEtapes: []
 		};
 
 		this.setTextInputRef = React.createRef();
@@ -96,10 +95,8 @@ class CreationVoyageAjoutEtapes extends React.Component {
 		this.inputphotoToReset = React.createRef();
 		this.imgcontainer = React.createRef();
 
-		this.toggleModal = this.toggleModal.bind(this)
-		this.getLatLnt = this.getLatLnt.bind(this);
-		this.editStep = this.editStep.bind(this);
 		this.changeEnteteBackground = this.changeEnteteBackground.bind(this);
+		this.addEtapeVoyage = this.addEtapeVoyage.bind(this);
 
 		this.newCity = React.createRef();
 		this.newName = React.createRef();
@@ -115,157 +112,34 @@ class CreationVoyageAjoutEtapes extends React.Component {
 		this.refHead = React.createRef();
 	}
 
-	editStep(refName, refLocation, refDate, refDateDepart, refDepartureTransport, refDescription) {
-		//console.log("EDIT !");
-		// reset values of components in the modal
-		this.newDescription.current.value = this.state.stepDescription;
-		this.newName.current.value = this.state.stepName;
-		this.newDate.current.value = this.state.stepDate;
-		this.newDateDepart.current.value = this.state.stepDateDepart;
-		this.newDepartureTransport.current.value = this.state.stepDepartureTransport;
-		this.newCity.current.value = this.state.stepCity;
-
-
+	// TODO
+	// A CHANGER ICI ! ET REFAIRE LE EDIT
+	addEtapeVoyage(parameters) {
+		//console.log(parameters);
 		this.setState({
-			editStepBool: true,
-			//refLocation: refLocation,
-			stepDate: refDate,
-			stepDateDepart: refDateDepart,
-			stepDepartureTransport: refDepartureTransport,
-			//refDescription: refDescription,
-			refName: refName,
+			allEtapes: [...this.state.allEtapes, {
+				"files": parameters.photos,
+				"description": parameters.description,
+				"date": parameters.arrival,
+				"dateDepart": parameters.departure,
+				"location": parameters.city,
+				"departureTransport": parameters.transport,
+				"name": parameters.title,
+				"etape": parameters.etape
+			}
+			]
 		})
-
-		//console.log(this.state.refLocation);
-
-		document.querySelector(".modal").classList.toggle("show-modal");
-	}
-
-	addEtapeVoyage() {
-		if (this.newName.current.value != "" && this.newDate.current.value != ""
-			&& this.newDateDepart.current.value != "" && this.newCity.current.value != "") {
-			var xhttp = new XMLHttpRequest();
-			var parentVoyage = this;
-			xhttp.onreadystatechange = function () {
-				//console.log(this.responseText);
-				var res = this.responseText;
-				if (this.readyState === 4 && this.status === 201) {
-					if (parentVoyage.state.editStepBool == false) {
-						ReactDOM.render(<UneEtape arguments={
-							{
-								"location": parentVoyage.newCity.current.value,
-								"files": parentVoyage.state.files,
-								"description": parentVoyage.newDescription.current.value,
-								"date": parentVoyage.newDate.current.value,
-								"dateDepart": parentVoyage.newDateDepart.current.value,
-								"departureTransport": parentVoyage.newDepartureTransport.current.value,
-								"name": parentVoyage.newName.current.value
-							}} editStepLink={parentVoyage.editStep} />, parentVoyage.setTextInputRef.current.appendChild(document.createElement('div')))
-					} else {
-						parentVoyage.state.refLocation.current.textContent = parentVoyage.newCity.current.value;
-						parentVoyage.state.refDate.current.textContent = parentVoyage.newDate.current.value;
-						parentVoyage.state.refDateDepart.current.textContent = parentVoyage.newDateDepart.current.value;
-						parentVoyage.state.refDepartureTransport.current.textContent = parentVoyage.newDepartureTransport.current.value;
-						parentVoyage.state.refDescription.current.textContent = parentVoyage.newDescription.current.value;
-						parentVoyage.state.refName.current.textContent = parentVoyage.newName.current.value;
-					}
-
-					// maintenant on envoi le transport
-					var xhttp = new XMLHttpRequest();
-					xhttp.onreadystatechange = function () {
-						//console.log(this.responseText);
-						if (this.readyState === 4 && this.status === 201) {
-							//console.log("Upload transport etape success");
-							parentVoyage.state.editStepBool = false;
-							parentVoyage.toggleModal();
-						}
-					};
-					xhttp.open("POST", "https://wtg.aymerik-diebold.fr/api/transports", true);
-					xhttp.setRequestHeader('Authorization', 'Bearer ' + parentVoyage.props.token);
-					xhttp.setRequestHeader('Content-Type', 'application/json');
-					xhttp.send(JSON.stringify({
-						stageFrom: "/api/stages/" + JSON.parse(res).id,
-						type: parentVoyage.newDepartureTransport.current.value,
-						distance: 0
-					}));
-
-				}
-			};
-
-			this.setState({
-				stepDescription: this.newDescription.current.value,
-				stepName: this.newName.current.value,
-				stepDate: this.newDate.current.value,
-				stepDateDepart: this.newDateDepart.current.value,
-				stepDepartureTransport: this.newDepartureTransport.current.value,
-				stepId: this.state.voyageId,
-				stepLat: this.state.newLat,
-				stepLnt: this.state.newLnt,
-				stepCity: this.newCity.current.value,
-				stepFiles: this.state.files
-			})
-
-			var listformat = [];
-			//console.log(this.state.files);
-			this.state.files.forEach(function (item) {
-				listformat.push(item.image_URL_BDD);
-			});
-			//console.log(listformat);
-
-			xhttp.open("POST", "https://wtg.aymerik-diebold.fr/api/stages", true);
-			xhttp.setRequestHeader('Authorization', 'Bearer ' + this.props.token);
-			xhttp.setRequestHeader('Content-Type', 'application/json');
-			xhttp.send(JSON.stringify({
-				city: this.newCity.current.value,
-				country: "rien",
-				mark: 0,
-				description: this.newDescription.current.value,
-				arrival: this.newDate.current.value,
-				departure: this.newDateDepart.current.value,
-				//departureTransport: this.newDepartureTransport.current.value,
-				trip: "/api/trips/" + this.state.voyageId,
-				lng: this.state.newLat,
-				lat: this.state.newLnt,
-				title: this.newName.current.value,
-				photos: listformat
-			}));
-		} else {
-			alert("Location, name, arrival and departure date required");
-		}
-	}
-
-	toggleModal() {
-		document.querySelector(".modal").classList.toggle("show-modal");
-
-		// reset values of components in the modal
-		this.newDescription.current.value = "";
-		this.newName.current.value = "";
-		this.newDate.current.value = "";
-		this.newDateDepart.current.value = "";
-		this.newDepartureTransport.current.value = "";
-		this.newCity.current.value = "";
-		this.inputphotoToReset.current.value = "";
-		this.imgcontainer.current.textContent = ""; // textContent is faster than innerHTML
-
-		this.setState({
-			files: []
-		})
-	}
-
-	changeButtonState(etat) {
-		this.boutonOK.current.disabled = etat;
-		if (etat == true)
-			this.boutonOK.current.textContent = "Image upload in progress..."
-		else
-			this.boutonOK.current.textContent = "Add step"
-		//console.log("change etat avec : ", etat);
-	}
-
-	getLatLnt(lat, lnt) {
-		this.setState({
-			newLnt: lnt,
-			newLat: lat
-		})
+		/*ReactDOM.render(<UneEtape arguments={
+			{
+				"location": parameters.city,
+				"files": parameters.photos,
+				"description": parameters.description,
+				"date": parameters.arrival,
+				"dateDepart": parameters.departure,
+				"departureTransport": parameters.transport,
+				"name": parameters.title
+			}} editStepKey={"addVoyage"} etape={parameters.etape} token={this.props.token} />, this.setTextInputRef.current.appendChild(document.createElement('div')));
+			*/
 	}
 
 	changeEnteteBackground(event) {
@@ -285,48 +159,13 @@ class CreationVoyageAjoutEtapes extends React.Component {
 				<EnteteVoyage param={{ changeCover: this.changeEnteteBackground, edit: true, refHead: this.refHead, title: this.state.name, description: this.state.description, vegan: this.state.vegan, ecolo: this.state.ecolo, stages: [], author: { firstName: "Nicolas", lastName: "Dupond" } }} />
 
 				<div ref={this.setTextInputRef}></div>
+				{this.state.allEtapes.map((etape, i) => (
+					<UneEtape arguments={etape} key={"UneEtape" + i} transport={etape.departureTransport} editStepKey={"addVoyage" + i} etape={etape.etape} token={this.props.token} />
+				))}
 
-				<div class="modal">
-					<div class="modal-content">
-						<span class="close-button" onClick={this.toggleModal}>×</span>
-						{/*https://community.algolia.com/places/documentation.html#getting-started */}
-						<label for="lville">Location</label>
-						<ResearchBarCity refCity={this.newCity} getdataback={this.getLatLnt} newLat={this.newLat} newLnt={this.newLnt} />
-
-						<label for="nometape">Step name</label>
-						<input ref={this.newName} type="text" id="nometape" name="nometape" placeholder="ex. visit of the Eiffel tower"></input>
-
-						<label for="larrivee">Arrival date</label>
-						<input ref={this.newDate} type="text" id="larrivee" name="larrivee" placeholder="Arrival.. (YYYY-MM-DD)"></input>
-
-						<label for="ldepart">Departure date</label>
-						<input ref={this.newDateDepart} type="text" id="ldepart" name="ldepart" placeholder="Departure.. (YYYY-MM-DD)"></input>
-
-						<label for="ltransport">Moyen de transport entre étapes</label>
-						<input ref={this.newDepartureTransport} type="text" id="ltransport" name="ltransport" placeholder="Train, car, tuk-tuk, on foot .."></input>
-
-						<label for="ldescription">Your story</label>
-						<textarea ref={this.newDescription} id="ldescription" name="ldescription" placeholder="What you want.."></textarea>
-
-						<Upload token={this.props.token} uploadID={"addVoyage"} addImgFile={this.addImgFile.bind(this)} files={this.state.files} changeButtonState={this.changeButtonState.bind(this)} imgcontainer={this.imgcontainer} refInput={this.inputphotoToReset} />
-
-						<button type="button" ref={this.boutonOK} onClick={this.addEtapeVoyage.bind(this)}>Add step</button>
-
-					</div>
-				</div>
-				<button class="trigger" onClick={this.toggleModal}>Add a step</button>
+				<AddStep reload={false} callback={this.addEtapeVoyage} tripId={this.props.voyageId} key={"addVoyage"} stepKey={"addVoyage"} token={this.props.token} />
 			</div>
 		);
-	}
-}
-
-
-// a terme, il faudrait faire une jolie popup
-class ModalChargement extends React.Component {
-	render() {
-		return (
-			<h2>Chargement</h2>
-		)
 	}
 }
 
@@ -405,7 +244,6 @@ export default class AddVoyage extends Component {
 	}
 
 	addMyVoyage(newname, newdescription, newvegan, newecolo) {
-		//console.log(newname, newdescription, newvegan, newecolo);
 		this.setState({
 			name: newname,
 			description: newdescription,
@@ -454,7 +292,7 @@ export default class AddVoyage extends Component {
 					!this.state.chargement ?
 						<CreationVoyage token={this.state.token} addMyVoyage={this.addMyVoyage.bind(this)} />
 						:
-						<ModalChargement />
+						<h2>Chargement</h2>
 					:
 					<CreationVoyageAjoutEtapes token={this.state.token} voyageId={this.state.voyageId} name={this.state.name} vegan={this.state.vegan} ecolo={this.state.ecolo} description={this.state.description} />
 				}

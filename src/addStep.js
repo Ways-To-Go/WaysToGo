@@ -5,6 +5,9 @@ import ResearchBarCity from "./ResearchBarCity";
 
 // affiche une popup permettant de modifier un voyage donné/
 // reload la page si modification
+/*
+ * si parametre reload=false, alors il faut fournir une methode callback qui renverra les parametres
+ */
 export default class AddStep extends Component {
 	constructor(props) {
 		super(props);
@@ -40,21 +43,40 @@ export default class AddStep extends Component {
 
 			// si l'utilisateur met de nouvelles photos, on change tout. Si il n'en met pas de nouvelles, on laisse les anciennes
 			var listformat = [];
-			if (this.state.files.length > 0) listformat = this.state.files;
-			else listformat = this.props.photos;
+			if (this.props.reload) {
+				if (this.state.files.length > 0) listformat = this.state.files;
+				else listformat = this.props.photos;
+			} else {
+				if (this.state.files.length > 0)
+					this.state.files.forEach(function (item) {
+						listformat.push(item.image_URL_BDD);
+					});
+				else listformat = this.props.photos;
+			}
 
 			var xhttp = new XMLHttpRequest();
 			var parentVoyage = this;
 			xhttp.onreadystatechange = function () {
-				console.log(this.responseText);
+				//console.log(this.responseText);
 				var res = this.responseText;
 				if (this.readyState === 4 && this.status === 201) {
 					var xhttp = new XMLHttpRequest();
+					//console.log(res);
 					xhttp.onreadystatechange = function () {
 						//console.log(this.responseText);
 						if (this.readyState === 4 && this.status === 201) {
+							if (parentVoyage.props.reload) document.location.reload(true); //reload page to see modifications
+							else parentVoyage.props.callback({
+								city: parentVoyage.newCity.current.value,
+								description: parentVoyage.newDescription.current.value,
+								arrival: parentVoyage.newDate.current.value,
+								departure: parentVoyage.newDateDepart.current.value,
+								title: parentVoyage.newName.current.value,
+								transport: parentVoyage.newDepartureTransport.current.value,
+								photos: parentVoyage.state.files,
+								etape: res
+							})
 							parentVoyage.toggleModal();
-							document.location.reload(true); //reload page to see modifications
 						}
 					};
 
@@ -98,7 +120,9 @@ export default class AddStep extends Component {
 
 	// to edit pictures
 	addImgFile(img) {
-		this.state.files.push(img.image_URL_BDD);
+		console.log(img);
+		if (this.props.reload) this.state.files.push(img.image_URL_BDD);
+		else this.state.files.push(img);
 	}
 	changeButtonState(etat) {
 		this.boutonOK2.current.disabled = etat; // disable button when upload, prevent button to be push until we have the ling of the image

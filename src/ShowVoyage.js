@@ -151,29 +151,6 @@ export class EnteteVoyage extends Component {
 					}
 
 				}
-				//else if (this.readyState === 4 && this.status === 401) {
-				// renouvellement token automatiquement
-				/*const headers = {
-					"Content-Type": "application/json",
-				};
-				Axios.post(
-					"https://wtg.aymerik-diebold.fr/login_check",
-					{
-						username: "mailleon@gmail.com",
-						password: "monmdp111A!",
-					},
-					{ headers }
-				)
-					.then((res) => {
-						//console.log(res);
-						superThis.props.connect(res.data.token);
-						superThis.verifIfTripAlreadySaved();
-					})
-					.catch((err) => {
-						throw err;
-					});*/
-				//alert("Connection time out. Please reconnect");
-				//}
 			};
 			xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/users/" + superThis.getCookie("id"), true);
 			xhttp.setRequestHeader('Content-Type', 'application/json');
@@ -351,7 +328,7 @@ export class EtapeVoyage extends React.Component {
 					))}
 
 					{this.props.myTrip ?
-						<EditStep key={this.props.editStepKey.toString + "add"} stepKey={this.props.editStepKey} step={this.props.etape} token={this.props.token} />
+						<EditStep reload={ true } key={this.props.editStepKey.toString + "add"} stepKey={this.props.editStepKey} step={this.props.etape} token={this.props.token} />
 						//console.log("here")
 						:
 						""
@@ -466,10 +443,11 @@ class ShowVoyage extends Component {
 					<div id="information">
 						<EnteteVoyage param={this.state.param} myTrip={this.state.myTrip} token={this.props.token} connect={this.props.connect} connected={this.props.connected} />
 						{this.state.myTrip ?
-							<AddStep tripId={this.state.param.id} key={"firstAddStep"} stepKey={"firstAddStep"} token={this.props.token} />
+							<AddStep reload={ true } tripId={this.state.param.id} key={"firstAddStep"} stepKey={"firstAddStep"} token={this.props.token} />
 							//console.log("here")
 							:
-							console.log("not here")
+							//console.log("not here")
+							""
 						}
 						<div id="etapes">
 							{this.state.param.stages.map((etape, i) => (
