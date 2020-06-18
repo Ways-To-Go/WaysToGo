@@ -11,6 +11,16 @@ export class Settings extends Component {
     newPassword: "",
     newPassword2: "",
     id: "",
+    showPersonal: true,
+    showPrivacy: false,
+  };
+
+  goPersonal = (e) => {
+    this.setState({ showPersonal: true, showPrivacy: false });
+  };
+
+  goPrivacy = (e) => {
+    this.setState({ showPersonal: false, showPrivacy: true });
   };
 
   onChange = (e) => {
@@ -132,61 +142,71 @@ export class Settings extends Component {
           <h1>Settings</h1>
           <div style={containerStyle}>
             <nav style={navStyle}>
-              <li style={navButton}>Personnal</li>
-              <li style={navButton}>Privacy</li>
+              <li style={navButton} onClick={this.goPersonal}>
+                Personnal
+              </li>
+              <li style={navButton} onClick={this.goPrivacy}>
+                Privacy
+              </li>
             </nav>
-            <div style={boxStyle}>
-              <div>
-                <p>Email</p>
-                <p>Firstname</p>
-                <p>Lastname</p>
-                <p>Current password</p>
-                <p>New password</p>
-                <p>New password confirmation</p>
+            {this.state.showPersonal ? (
+              <div style={boxStyle}>
+                <div>
+                  <p>Email</p>
+                  <p>Firstname</p>
+                  <p>Lastname</p>
+                  <p>Current password</p>
+                  <p>New password</p>
+                  <p>New password confirmation</p>
+                </div>
+                <div style={info}>
+                  <p>{this.state.email}</p>
+                  <input
+                    type="text"
+                    name="firstname"
+                    id="firstname"
+                    onChange={this.onChange}
+                    value={this.state.firstname}
+                  />
+                  <input
+                    type="text"
+                    name="lastname"
+                    id="lastname"
+                    onChange={this.onChange}
+                    value={this.state.lastname}
+                  />
+                  <input
+                    type="password"
+                    name="currentPassword"
+                    value={this.state.currentPassword}
+                    onChange={this.onChange}
+                  />
+                  <input
+                    type="password"
+                    name="newPassword"
+                    value={this.state.newPassword}
+                    onChange={this.onChange}
+                  />
+                  <input
+                    type="password"
+                    name="newPassword2"
+                    value={this.state.newPassword2}
+                    onChange={this.onChange}
+                  />
+                  <input
+                    style={{ width: "30%" }}
+                    type="submit"
+                    value="Save profile"
+                    onClick={this.onSubmit}
+                  />
+                </div>
               </div>
-              <div style={info}>
-                <p>{this.state.email}</p>
-                <input
-                  type="text"
-                  name="firstname"
-                  id="firstname"
-                  onChange={this.onChange}
-                  value={this.state.firstname}
-                />
-                <input
-                  type="text"
-                  name="lastname"
-                  id="lastname"
-                  onChange={this.onChange}
-                  value={this.state.lastname}
-                />
-                <input
-                  type="password"
-                  name="currentPassword"
-                  value={this.state.currentPassword}
-                  onChange={this.onChange}
-                />
-                <input
-                  type="password"
-                  name="newPassword"
-                  value={this.state.newPassword}
-                  onChange={this.onChange}
-                />
-                <input
-                  type="password"
-                  name="newPassword2"
-                  value={this.state.newPassword2}
-                  onChange={this.onChange}
-                />
+            ) : (
+              <div style={boxStyle}>
+                <p>Privacy page in construction</p>
               </div>
-            </div>
+            )}
           </div>
-          <input
-            style={{ width: "30%" }}
-            type="submit"
-            value="Save profile"
-            onClick={this.onSubmit}
-          />
         </div>
       </div>
     );
@@ -209,12 +229,16 @@ const navStyle = {
 };
 const navButton = {
   padding: "15px",
+  border: "solid 1px black",
+  backgroundColor: "#F3F3F3",
 };
 
 const boxStyle = {
   display: "flex",
-  justifyContent: "space-between",
-  border: "solid 3px red",
+  width: "80%",
+  justifyContent: "space-around",
+  border: "solid 1px black",
+  backgroundColor: "#F3F3F3",
 };
 
 const info = {
