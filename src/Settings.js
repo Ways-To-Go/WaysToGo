@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import NavigationBar from "./NavigationBar";
 import Axios from "axios";
+import Popup from "./Popup";
 
 export class Settings extends Component {
   state = {
@@ -13,6 +14,7 @@ export class Settings extends Component {
     id: "",
     showPersonal: true,
     showPrivacy: false,
+    message: "",
   };
 
   goPersonal = (e) => {
@@ -73,7 +75,8 @@ export class Settings extends Component {
                   throw err;
                 });
             } else {
-              console.log("Not the same password");
+              console.log("Not the same passwords");
+              this.setState({ message: "Not the same passwords" });
             }
           }
         })
@@ -133,6 +136,11 @@ export class Settings extends Component {
   render() {
     return (
       <div className="settings">
+        {this.state.message.length !== 0 ? (
+          <Popup message={this.state.message} />
+        ) : (
+          <span></span>
+        )}
         <NavigationBar
           active="6"
           connected={this.props.connected}
