@@ -23,32 +23,54 @@ export class Settings extends Component {
 
     if (this.state.currentPassword !== "") {
       // TODO: check if current password is correct
-      if (this.state.newPassword === this.state.newPassword2) {
-        Axios.patch(
-          "https://wtg.aymerik-diebold.fr/api/users/" + this.props.connected,
-          {
-            password: this.state.newPassword,
-            firstName: this.state.firstname,
-            lastName: this.state.lastname,
+      Axios.post(
+        "https://wtg.aymerik-diebold.fr/api/password",
+        {
+          password: this.state.currentPassword,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + this.props.token,
+            "Content-type": "application/json",
           },
-          {
-            headers: {
-              Authorization: "Bearer " + this.props.token,
-              "Content-Type": "application/merge-patch+json",
-            },
+        }
+      )
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.valid) {
+            console.log("Correct password");
+            if (this.state.newPassword === this.state.newPassword2) {
+              Axios.patch(
+                "https://wtg.aymerik-diebold.fr/api/users/" +
+                  this.props.connected,
+                {
+                  password: this.state.newPassword,
+                  firstName: this.state.firstname,
+                  lastName: this.state.lastname,
+                },
+                {
+                  headers: {
+                    Authorization: "Bearer " + this.props.token,
+                    "Content-Type": "application/merge-patch+json",
+                  },
+                }
+              )
+                .then((res) => {
+                  console.log("Password changed successfully");
+                })
+                .catch((err) => {
+                  console.log("Error while changing password");
+                  throw err;
+                });
+            } else {
+              console.log("Not the same password");
+            }
           }
-        )
-          .then((res) => {
-            console.log("it worked");
-            console.log(res);
-          })
-          .catch((err) => {
-            console.log("Error on chaging profile");
-            throw err;
-          });
-      } else {
-        console.log("Not the same password");
-      }
+        })
+        .catch((err) => {
+          console.log("Error while checking password");
+          throw err;
+        });
     } else {
       console.log("Changing only first/last name");
       Axios.patch(
@@ -65,8 +87,7 @@ export class Settings extends Component {
         }
       )
         .then((res) => {
-          console.log("it worked");
-          console.log(res);
+          console.log("First/Last name changed successfully");
         })
         .catch((err) => {
           console.log("Error on chaging profile");
