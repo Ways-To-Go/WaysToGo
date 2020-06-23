@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import NavigationBar from "./NavigationBar";
 import Axios from "axios";
+import Popup from "./Popup";
 
 export class Settings extends Component {
   state = {
@@ -11,6 +12,17 @@ export class Settings extends Component {
     newPassword: "",
     newPassword2: "",
     id: "",
+    showPersonal: true,
+    showPrivacy: false,
+    message: "",
+  };
+
+  goPersonal = (e) => {
+    this.setState({ showPersonal: true, showPrivacy: false });
+  };
+
+  goPrivacy = (e) => {
+    this.setState({ showPersonal: false, showPrivacy: true });
   };
 
   onChange = (e) => {
@@ -23,32 +35,55 @@ export class Settings extends Component {
 
     if (this.state.currentPassword !== "") {
       // TODO: check if current password is correct
-      if (this.state.newPassword === this.state.newPassword2) {
-        Axios.patch(
-          "https://wtg.aymerik-diebold.fr/api/users/" + this.props.connected,
-          {
-            password: this.state.newPassword,
-            firstName: this.state.firstname,
-            lastName: this.state.lastname,
+      Axios.post(
+        "https://wtg.aymerik-diebold.fr/api/password",
+        {
+          password: this.state.currentPassword,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + this.props.token,
+            "Content-type": "application/json",
           },
-          {
-            headers: {
-              Authorization: "Bearer " + this.props.token,
-              "Content-Type": "application/merge-patch+json",
-            },
+        }
+      )
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.valid) {
+            console.log("Correct password");
+            if (this.state.newPassword === this.state.newPassword2) {
+              Axios.patch(
+                "https://wtg.aymerik-diebold.fr/api/users/" +
+                  this.props.connected,
+                {
+                  password: this.state.newPassword,
+                  firstName: this.state.firstname,
+                  lastName: this.state.lastname,
+                },
+                {
+                  headers: {
+                    Authorization: "Bearer " + this.props.token,
+                    "Content-Type": "application/merge-patch+json",
+                  },
+                }
+              )
+                .then((res) => {
+                  console.log("Password changed successfully");
+                })
+                .catch((err) => {
+                  console.log("Error while changing password");
+                  throw err;
+                });
+            } else {
+              console.log("Not the same passwords");
+              this.setState({ message: "Not the same passwords" });
+            }
           }
-        )
-          .then((res) => {
-            console.log("it worked");
-            console.log(res);
-          })
-          .catch((err) => {
-            console.log("Error on chaging profile");
-            throw err;
-          });
-      } else {
-        console.log("Not the same password");
-      }
+        })
+        .catch((err) => {
+          console.log("Error while checking password");
+          throw err;
+        });
     } else {
       console.log("Changing only first/last name");
       Axios.patch(
@@ -65,8 +100,7 @@ export class Settings extends Component {
         }
       )
         .then((res) => {
-          console.log("it worked");
-          console.log(res);
+          console.log("First/Last name changed successfully");
         })
         .catch((err) => {
           console.log("Error on chaging profile");
@@ -102,6 +136,11 @@ export class Settings extends Component {
   render() {
     return (
       <div className="settings">
+        {this.state.message.length !== 0 ? (
+          <Popup message={this.state.message} />
+        ) : (
+          <span></span>
+        )}
         <NavigationBar
           active="6"
           connected={this.props.connected}
@@ -111,61 +150,71 @@ export class Settings extends Component {
           <h1>Settings</h1>
           <div style={containerStyle}>
             <nav style={navStyle}>
-              <li style={navButton}>Personnal</li>
-              <li style={navButton}>Privacy</li>
+              <li style={navButton} onClick={this.goPersonal}>
+                Personnal
+              </li>
+              <li style={navButton} onClick={this.goPrivacy}>
+                Privacy
+              </li>
             </nav>
-            <div style={boxStyle}>
-              <div>
-                <p>Email</p>
-                <p>Firstname</p>
-                <p>Lastname</p>
-                <p>Current password</p>
-                <p>New password</p>
-                <p>New password confirmation</p>
+            {this.state.showPersonal ? (
+              <div style={boxStyle}>
+                <div>
+                  <p>Email</p>
+                  <p>Firstname</p>
+                  <p>Lastname</p>
+                  <p>Current password</p>
+                  <p>New password</p>
+                  <p>New password confirmation</p>
+                </div>
+                <div style={info}>
+                  <p>{this.state.email}</p>
+                  <input
+                    type="text"
+                    name="firstname"
+                    id="firstname"
+                    onChange={this.onChange}
+                    value={this.state.firstname}
+                  />
+                  <input
+                    type="text"
+                    name="lastname"
+                    id="lastname"
+                    onChange={this.onChange}
+                    value={this.state.lastname}
+                  />
+                  <input
+                    type="password"
+                    name="currentPassword"
+                    value={this.state.currentPassword}
+                    onChange={this.onChange}
+                  />
+                  <input
+                    type="password"
+                    name="newPassword"
+                    value={this.state.newPassword}
+                    onChange={this.onChange}
+                  />
+                  <input
+                    type="password"
+                    name="newPassword2"
+                    value={this.state.newPassword2}
+                    onChange={this.onChange}
+                  />
+                  <input
+                    style={{ width: "30%" }}
+                    type="submit"
+                    value="Save profile"
+                    onClick={this.onSubmit}
+                  />
+                </div>
               </div>
-              <div style={info}>
-                <p>{this.state.email}</p>
-                <input
-                  type="text"
-                  name="firstname"
-                  id="firstname"
-                  onChange={this.onChange}
-                  value={this.state.firstname}
-                />
-                <input
-                  type="text"
-                  name="lastname"
-                  id="lastname"
-                  onChange={this.onChange}
-                  value={this.state.lastname}
-                />
-                <input
-                  type="password"
-                  name="currentPassword"
-                  value={this.state.currentPassword}
-                  onChange={this.onChange}
-                />
-                <input
-                  type="password"
-                  name="newPassword"
-                  value={this.state.newPassword}
-                  onChange={this.onChange}
-                />
-                <input
-                  type="password"
-                  name="newPassword2"
-                  value={this.state.newPassword2}
-                  onChange={this.onChange}
-                />
+            ) : (
+              <div style={boxStyle}>
+                <p>Privacy page in construction</p>
               </div>
-            </div>
+            )}
           </div>
-          <input
-            style={{ width: "30%" }}
-            type="submit"
-            value="Save profile"
-            onClick={this.onSubmit}
-          />
         </div>
       </div>
     );
@@ -188,12 +237,16 @@ const navStyle = {
 };
 const navButton = {
   padding: "15px",
+  border: "solid 1px black",
+  backgroundColor: "#F3F3F3",
 };
 
 const boxStyle = {
   display: "flex",
-  justifyContent: "space-between",
-  border: "solid 3px red",
+  width: "80%",
+  justifyContent: "space-around",
+  border: "solid 1px black",
+  backgroundColor: "#F3F3F3",
 };
 
 const info = {
