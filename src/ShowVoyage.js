@@ -307,12 +307,12 @@ export class EtapeVoyage extends React.Component {
 		return (
 			<div>
 				<div class="etape">
-					<p class="nomEtape">{this.props.etape.description}</p>
-
+					<p class="nomEtape">{this.props.etape.title}</p>
+					{console.log(this.props.etape)}
 					<p class="villedate_etape">
 						{this.props.etape.city + " • " + new Date(this.props.etape.arrival)}
 					</p>
-
+					<p>{this.props.etape.description}</p>
 					{this.props.etape.photos.map((photo, i) => (
 						<div>
 							<img
