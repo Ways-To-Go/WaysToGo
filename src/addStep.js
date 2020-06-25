@@ -166,7 +166,7 @@ export default class AddStep extends Component {
 						<label for="ldepart">Departure date</label>
 						<input ref={this.newDateDepart} type="text" id="ldepart" name="ldepart" placeholder="Departure.. (YYYY-MM-DD)"></input>
 
-						<label for="ltransport">Moyen de transport entre étapes</label>
+						<label for="ltransport">Means of transport between steps</label>
 						<input ref={this.newDepartureTransport} type="text" id="ltransport" name="ltransport" placeholder="Train, car, tuk-tuk, on foot .."></input>
 
 						<label for="ldescription">Your story</label>

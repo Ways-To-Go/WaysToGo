@@ -26,13 +26,13 @@ export default class ShowCarte extends Component {
         parentThis.setState({
           voyages: JSON.parse(this.response)["hydra:member"], // stock all trips
         });
-        //console.log(JSON.parse(this.response));
+        console.log(JSON.parse(this.response));
       }
     };
     xhttp.open("GET", "https://wtg.aymerik-diebold.fr/api/trips", true);
     xhttp.send();
 
-    /*for (let i = 333; i < 335; i++) {
+   /* for (let i = 353; i < 440; i++) {
 			// delete all
 			var xhttp2 = new XMLHttpRequest();
 			xhttp2.onreadystatechange = function () {

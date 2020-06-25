@@ -108,7 +108,7 @@ export default class App extends Component {
       );
     } else {
       return (
-        <ShowCarte connected={this.state.connected} connect={this.connect} />
+		  <ShowCarte connected={this.state.connected} connect={this.connect} token={this.state.token} />
       );
     }
   }
