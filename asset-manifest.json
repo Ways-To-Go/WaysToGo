@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/WaysToGo/static/css/main.86ffdb6f.chunk.css",
-    "main.js": "/WaysToGo/static/js/main.1293d942.chunk.js",
-    "main.js.map": "/WaysToGo/static/js/main.1293d942.chunk.js.map",
+    "main.js": "/WaysToGo/static/js/main.b9fcce2c.chunk.js",
+    "main.js.map": "/WaysToGo/static/js/main.b9fcce2c.chunk.js.map",
     "runtime-main.js": "/WaysToGo/static/js/runtime-main.29cc8039.js",
     "runtime-main.js.map": "/WaysToGo/static/js/runtime-main.29cc8039.js.map",
     "static/js/2.5bcb5afd.chunk.js": "/WaysToGo/static/js/2.5bcb5afd.chunk.js",
     "static/js/2.5bcb5afd.chunk.js.map": "/WaysToGo/static/js/2.5bcb5afd.chunk.js.map",
     "index.html": "/WaysToGo/index.html",
-    "precache-manifest.c9c01ea4d474999ae97bb1be756d0dd3.js": "/WaysToGo/precache-manifest.c9c01ea4d474999ae97bb1be756d0dd3.js",
+    "precache-manifest.c9f9e7f6d2c43d50a01ebe823ba0c253.js": "/WaysToGo/precache-manifest.c9f9e7f6d2c43d50a01ebe823ba0c253.js",
     "service-worker.js": "/WaysToGo/service-worker.js",
     "static/css/main.86ffdb6f.chunk.css.map": "/WaysToGo/static/css/main.86ffdb6f.chunk.css.map",
     "static/js/2.5bcb5afd.chunk.js.LICENSE.txt": "/WaysToGo/static/js/2.5bcb5afd.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.29cc8039.js",
     "static/js/2.5bcb5afd.chunk.js",
     "static/css/main.86ffdb6f.chunk.css",
-    "static/js/main.1293d942.chunk.js"
+    "static/js/main.b9fcce2c.chunk.js"
   ]
 }
